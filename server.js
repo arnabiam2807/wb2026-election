@@ -203,15 +203,25 @@ Respond ONLY in this JSON format (no markdown, no explanation outside the JSON):
 
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 800, temperature: 0.3 },
-      }),
-      signal: AbortSignal.timeout(30000),
-    });
+    let r, attempts = 0;
+    while (attempts < 3) {
+      r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { maxOutputTokens: 800, temperature: 0.3 },
+        }),
+        signal: AbortSignal.timeout(30000),
+      });
+      if (r.status === 429) {
+        attempts++;
+        console.log(`[AI] Rate limited, waiting ${attempts * 20}s...`);
+        await new Promise(res => setTimeout(res, attempts * 20000));
+        continue;
+      }
+      break;
+    }
     if (!r.ok) {
       const errText = await r.text();
       console.error('[AI] Gemini HTTP error:', r.status, errText);
@@ -250,12 +260,14 @@ async function fullRefresh() {
   cache.lastFullRefresh = new Date().toISOString();
   await fetchNews();
   await fetchExitPollData();
+  // Small delay to avoid rate limits
+  await new Promise(r => setTimeout(r, 3000));
   await buildIntelligence();
   console.log('[refresh] complete');
 }
 
-// Auto-refresh every 20 minutes
-setInterval(fullRefresh, 20 * 60 * 1000);
+// Auto-refresh every 30 minutes (Gemini free tier rate limit friendly)
+setInterval(fullRefresh, 30 * 60 * 1000);
 // Kick off immediately on startup
 fullRefresh();
 
