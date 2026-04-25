@@ -217,6 +217,11 @@ Respond ONLY in this JSON format (no markdown, no explanation outside the JSON):
       }),
       signal: AbortSignal.timeout(30000),
     });
+    if (!r.ok) {
+      const errText = await r.text();
+      console.error('[AI] HTTP error:', r.status, errText);
+      throw new Error(`HTTP ${r.status}: ${errText}`);
+    }
     const data = await r.json();
     const text = data.content?.[0]?.text || '{}';
     // Strip any accidental markdown fences
@@ -233,9 +238,9 @@ Respond ONLY in this JSON format (no markdown, no explanation outside the JSON):
     };
     console.log(`[AI] intelligence updated — stage: ${status.stage}`);
   } catch(e) {
-    console.error('[AI] error:', e.message);
+    console.error('[AI] error:', e.message, e.stack);
     cache.intelligence = {
-      summary: 'AI analysis temporarily unavailable.',
+      summary: `AI error: ${e.message}`,
       signals: [],
       updatedAt: new Date().toISOString(),
       stage: status.stage,
