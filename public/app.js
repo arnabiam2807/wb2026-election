@@ -398,9 +398,15 @@ function renderTable() {
     const tr = document.createElement('tr');
     if (selectedRow===no) tr.classList.add('selected');
     tr.onclick = ()=>showDetail(no-1);
+    const inc = s[9] && s[9]!=='—' ? s[9] : '';
+    const lf  = s[10] && s[10]!=='—' ? s[10] : '';
+    const otherCands = [inc?`INC: ${inc}`:'', lf?`LF: ${lf}`:''].filter(Boolean).join(' · ');
     tr.innerHTML = `
       <td><span class="seat-no">${no}</span></td>
-      <td><span class="seat-name">${name}</span>${cat?`<span class="seat-cat"> ${cat}</span>`:''}</td>
+      <td>
+        <span class="seat-name">${name}</span>${cat?`<span class="seat-cat"> ${cat}</span>`:''}
+        ${otherCands?`<div style="font-size:10px;color:var(--subtle);margin-top:2px">${otherCands}</div>`:''}
+      </td>
       <td><span class="seat-district">${district}</span></td>
       <td><span class="winner-badge w-${winner.toLowerCase()}">${winner}</span>${mcProb}</td>
       <td><span class="cand-name" title="${tmc}">${tmc}</span></td>
@@ -448,6 +454,8 @@ function showDetail(idx) {
       </div>`;
   }
 
+  const incCand = s[9] && s[9]!=='—' ? s[9] : '—';
+  const lfCand  = s[10] && s[10]!=='—' ? s[10] : '—';
   document.getElementById('dp-grid').innerHTML = `
     ${mcInfo}
     <div class="detail-stat"><div class="detail-stat-label">Predicted winner</div>
@@ -457,7 +465,11 @@ function showDetail(idx) {
     <div class="detail-stat"><div class="detail-stat-label">TMC candidate</div>
       <div class="detail-stat-val" style="font-size:13px">${tmc}</div></div>
     <div class="detail-stat"><div class="detail-stat-label">BJP candidate</div>
-      <div class="detail-stat-val" style="font-size:13px">${bjp}</div></div>`;
+      <div class="detail-stat-val" style="font-size:13px">${bjp}</div></div>
+    <div class="detail-stat"><div class="detail-stat-label">INC candidate</div>
+      <div class="detail-stat-val" style="font-size:13px;color:var(--inc)">${incCand}</div></div>
+    <div class="detail-stat"><div class="detail-stat-label">Left Front candidate</div>
+      <div class="detail-stat-val" style="font-size:13px;color:var(--lf)">${lfCand}</div></div>`;
 
   document.getElementById('dp-reason').textContent = WINNER_REASONS[winner]||WINNER_REASONS.TMC;
   document.getElementById('dp-actions').innerHTML = `
