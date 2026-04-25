@@ -2220,36 +2220,30 @@ function renderTable() {
     if (lastMCResult && lastMCResult.seatProbs[no]) {
       const sp = lastMCResult.seatProbs[no];
       const pct = winner==='BJP' ? sp.bjpProb : (winner==='BGPM' ? sp.bgpmProb : (winner==='INC' ? sp.incProb : sp.tmcProb));
-      mcProb = `<span style="font-size:9px;font-family:'JetBrains Mono',monospace;color:${color};margin-left:4px">${pct}%</span>`;
+      mcProb = '<span style="font-size:9px;font-family:\'JetBrains Mono\',monospace;color:'+color+';margin-left:4px">'+pct+'%</span>';
     }
 
+    const inc = (s[9] && s[9]!=="—") ? s[9] : "";
+    const lf  = s[10] && s[10]!=='—' ? s[10] : '';
+    const otherCands = [inc?'INC: '+inc:'', lf?'LF: '+lf:''].filter(Boolean).join(' · ');
     const tr = document.createElement('tr');
     if (selectedRow===no) tr.classList.add('selected');
     tr.onclick = ()=>showDetail(no-1);
-    const inc = (s[9] && s[9]!=="—") ? s[9] : "";
-    const lf  = s[10] && s[10]!=='—' ? s[10] : '';
-    const otherCands = [inc?`INC: ${inc}`:'', lf?`LF: ${lf}`:''].filter(Boolean).join(' · ');
-    tr.innerHTML = `
-      <td><span class="seat-no">${no}</span></td>
-      <td>
-        <span class="seat-name">${name}</span>${cat ? '<span class="seat-cat"> ' + cat + '</span>' : ''}
-        ${otherCands ? '<div style="font-size:10px;color:var(--subtle);margin-top:2px">' + otherCands + '</div>' : ''}
-      </td>
-      <td><span class="seat-district">${district}</span></td>
-      <td><span class="winner-badge w-${winner.toLowerCase()}">${winner}</span>${mcProb}</td>
-      <td><span class="cand-name" title="${tmc}">${tmc}</span></td>
-      <td><span class="cand-name" title="${bjp}">${bjp}</span></td>
-      <td><div class="conf-wrap">
-        <span class="conf-num">${conf}%</span>
-        <div class="conf-bar"><div class="conf-fill" style="width:${conf}%;background:${color}"></div></div>
-      </div></td>
-      <td><span class="phase-tag">Ph ${phase}</span></td>`;
+    tr.innerHTML = '<td><span class="seat-no">'+no+'</span></td>'
+      + '<td><span class="seat-name">'+name+'</span>'+(cat?'<span class="seat-cat"> '+cat+'</span>':'')+(otherCands?'<div style="font-size:10px;color:var(--subtle);margin-top:2px">'+otherCands+'</div>':'')+'</td>'
+      + '<td><span class="seat-district">'+district+'</span></td>'
+      + '<td><span class="winner-badge w-'+winner.toLowerCase()+'">'+winner+'</span>'+mcProb+'</td>'
+      + '<td><span class="cand-name" title="'+tmc+'">'+tmc+'</span></td>'
+      + '<td><span class="cand-name" title="'+bjp+'">'+bjp+'</span></td>'
+      + '<td><div class="conf-wrap"><span class="conf-num">'+conf+'%</span><div class="conf-bar"><div class="conf-fill" style="width:'+conf+'%;background:'+color+'"></div></div></div></td>'
+      + '<td><span class="phase-tag">Ph '+phase+'</span></td>';
     tbody.appendChild(tr);
   });
 
   const cnt = document.getElementById('tblCount');
-  if (cnt) cnt.textContent = `${list.length} of ${SEATS.length} seats`;
+  if (cnt) cnt.textContent = list.length + ' of ' + SEATS.length + ' seats';
 }
+
 
 // ── Detail panel ──────────────────────────────────────────────────────────────
 function showDetail(idx) {
