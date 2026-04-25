@@ -228,9 +228,30 @@ Respond ONLY in this JSON format (no markdown, no explanation outside the JSON):
       throw new Error(`HTTP ${r.status}: ${errText}`);
     }
     const data = await r.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-    const clean = text.replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(clean);
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log('[AI] Gemini raw response:', text.substring(0, 200));
+    
+    let parsed = {};
+    try {
+      const clean = text.replace(/```json|```/g,'').trim();
+      // Find JSON object in response
+      const jsonMatch = clean.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        parsed = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('No JSON found in response');
+      }
+    } catch(parseErr) {
+      console.error('[AI] JSON parse error:', parseErr.message, 'Raw:', text.substring(0,300));
+      // If JSON fails, use the raw text as summary
+      parsed = {
+        summary: text.substring(0, 500) || 'Analysis unavailable.',
+        signals: [],
+        confidence: 'MEDIUM',
+        tmc_range: '155-175',
+        bjp_range: '95-115'
+      };
+    }
     cache.intelligence = {
       summary:    parsed.summary    || 'Analysis unavailable.',
       signals:    parsed.signals    || [],
