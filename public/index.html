@@ -1194,8 +1194,1186 @@ footer {
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="seats.js"></script>
-<script src="montecarlo.js"></script>
-<script src="app.js"></script>
+<script>
+// West Bengal 2026 Assembly Election — All 294 constituencies
+// Candidates: Official ECI data via voterlist.co.in (TMC list 17 Mar 2026, BJP list Mar-Apr 2026)
+// Predictions: Independent multi-factor model (2021 result, 2024 LS segment, demographics, SIR, candidate, local factors)
+// NO paid surveys used.
+
+const SEATS = [
+// ── PHASE 1 (Apr 23) — Seats 1-76 ──────────────────────────────────────────
+// COOCH BEHAR
+[1,"Mekliganj","Cooch Behar","TMC","Paresh Chandra Adhikary","Dadhiram Roy",62,1,"SC","—","—"]
+[2,"Mathabhanga","Cooch Behar","BJP","Sablu Barman","Nisith Pramanik",75,1,"SC","—","—"]
+[3,"Cooch Behar Uttar","Cooch Behar","BJP","Partha Pratim Roy","Sukumar Roy",71,1,"SC","—","—"]
+[4,"Cooch Behar Dakshin","Cooch Behar","SWING","Avijit De Bhowmick","—",49,1,"","—","—"]
+[5,"Sitalkuchi","Cooch Behar","TMC","Harihar Das","Savitri Barman",62,1,"SC","—","—"]
+[6,"Sitai","Cooch Behar","TMC","Sangita Roy Basunia","Ashutosh Barma",65,1,"SC","—","—"]
+[7,"Dinhata","Cooch Behar","SWING","Udayan Guha","Ajay Roy",50,1,"","—","—"]
+[8,"Natabari","Cooch Behar","BJP","Sailen Barma","Girija Shankar Roy",70,1,"","—","—"]
+[9,"Tufanganj","Cooch Behar","BJP","Shib Sankar Paul","Malati Rava Roy",67,1,"","—","—"]
+// ALIPURDUAR
+[10,"Kumargram","Alipurduar","BJP","Rajeev Tirkey","Manoj Kumar Oraon",72,1,"ST","—","—"]
+[11,"Kalchini","Alipurduar","BJP","Birendra Bara","Bishal Lama",76,1,"ST","—","—"]
+[12,"Alipurduars","Alipurduar","BJP","Suman Kanjilal","Paritosh Das",60,1,"","—","—"]
+[13,"Falakata","Alipurduar","BJP","Subhash Chandra Roy","Deepak Barman",64,1,"SC","—","—"]
+[14,"Madarihat","Alipurduar","TMC","Jayprakash Toppo","Lakshman Limbu",56,1,"ST","—","—"]
+// JALPAIGURI
+[15,"Dhupguri","Jalpaiguri","BJP","Dr. Nirmal Chandra Roy","Naresh Chandra Roy",60,1,"SC","—","—"]
+[16,"Maynaguri","Jalpaiguri","BJP","Ram Mohan Roy","Dalim Roy",61,1,"SC","—","—"]
+[17,"Jalpaiguri","Jalpaiguri","TMC","Krishna Das","Ananta Deb Adhikary",62,1,"SC","—","—"]
+[18,"Rajganj","Jalpaiguri","TMC","Swapna Barman","—",62,1,"SC","—","—"]
+[19,"Dabgram-Phulbari","Jalpaiguri","BJP","Ranjan Shil Sharma","Sikha Chatterjee",61,1,"","—","—"]
+[20,"Mal","Jalpaiguri","TMC","Bulu Chik Baraik","Sukra Munda",59,1,"ST","—","—"]
+[21,"Nagrakata","Jalpaiguri","BJP","Sanjay Kujur","Puna Bhengra",64,1,"ST","—","—"]
+// KALIMPONG + DARJEELING
+[22,"Kalimpong","Kalimpong","BGPM","—","Bharat Chetri",73,1,"","—","—"]
+[23,"Darjeeling","Darjeeling","BGPM","—","Noman Rai",74,1,"","—","—"]
+[24,"Kurseong","Darjeeling","BGPM","—","Sonam Lama",70,1,"","—","—"]
+[25,"Matigara-Naxalbari","Darjeeling","BJP","Sankar Malakar","Anandamay Barman",64,1,"SC","—","—"]
+[26,"Siliguri","Darjeeling","SWING","Goutam Deb","Dr. Shankar Ghosh",47,1,"","Probal Kumar Sinha","Ashok Bhattacharya"]
+[27,"Phansidewa","Darjeeling","BJP","Reena Toppo Ekka","Durga Murmu",63,1,"ST","—","—"]
+// UTTAR DINAJPUR
+[28,"Chopra","Uttar Dinajpur","TMC","Hamidul Rahaman","Shankar Adhikari",68,1,"","—","—"]
+[29,"Islampur","Uttar Dinajpur","TMC","Kanaia Lal Aggarwal","—",67,1,"","—","—"]
+[30,"Goalpokhar","Uttar Dinajpur","TMC","Md. Ghulam Rabbani","Sarjit Biswas",70,1,"","—","—"]
+[31,"Chakulia","Uttar Dinajpur","SWING","Minhajul Arfin Azad","Manoj Jain",46,1,"","—","—"]
+[32,"Karandighi","Uttar Dinajpur","TMC","Gautam Paul","Adv. Biraj Biswas",65,1,"","—","—"]
+[33,"Hemtabad","Uttar Dinajpur","TMC","Satyajit Barman","—",67,1,"SC","—","—"]
+[34,"Kaliaganj","Uttar Dinajpur","SWING","Nitai Baishya","Utpal Maharaj",46,1,"SC","—","—"]
+[35,"Raiganj","Uttar Dinajpur","TMC","Krishna Kalyani","Kaushik Chowdhury",63,1,"","Moazzem Hossain","Md. Salim"]
+[36,"Itahar","Uttar Dinajpur","TMC","Mosaraf Hussain","Sabita Barman",68,1,"","—","—"]
+// DAKSHIN DINAJPUR
+[37,"Kushmandi","Dakshin Dinajpur","TMC","Rekha Roy","Tapas Chandra Roy",64,1,"SC","—","—"]
+[38,"Kumarganj","Dakshin Dinajpur","TMC","Toraf Hossain Mondal","Suvendu Sarkar",67,1,"","—","—"]
+[39,"Balurghat","Dakshin Dinajpur","BJP","Arpita Ghosh","Bidyut Roy",62,1,"","Gopal Lama","—"]
+[40,"Tapan","Dakshin Dinajpur","BJP","Chintamoni Biha","Budhrai Tudu",63,1,"ST","—","—"]
+[41,"Gangarampur","Dakshin Dinajpur","BJP","Goutam Das","Satyendra Nath Rai",62,1,"SC","—","—"]
+[42,"Harirampur","Dakshin Dinajpur","TMC","Biplab Mitra","Debabrata Majumder",65,1,"","—","—"]
+// MALDA
+[43,"Habibpur","Malda","BJP","Amal Kisku","Joyel Murmu",63,1,"ST","—","—"]
+[44,"Gazole","Malda","BJP","Prosenjit Das","Chinmoy Deb Barman",61,1,"SC","Barun Prasad Das","—"]
+[45,"Chanchal","Malda","TMC","Prasun Banerjee","Ratan Das",72,1,"","—","—"]
+[46,"Harischandrapur","Malda","TMC","Md. Matebur Rahman","Ratan Das",70,1,"","—","—"]
+[47,"Malatipur","Malda","SWING","Abdur Rahim Boxi","Ashish Das",46,1,"","—","—"]
+[48,"Ratua","Malda","TMC","Samar Mukherjee","Abhishek Singhania",68,1,"","—","—"]
+[49,"Manikchak","Malda","TMC","Kabita Mandal","Gaur Chandra Mandal",67,1,"","—","—"]
+[50,"Maldaha","Malda","BJP","Lipika Barman Ghosh","Gopal Chandra Saha",60,1,"SC","Priya Ranjan Das","—"]
+[51,"English Bazar","Malda","TMC","Asis Kundu","—",65,1,"","—","—"]
+[52,"Mothabari","Malda","TMC","Md. Najrul Islam","Nibaran Ghosh",74,1,"","—","—"]
+[53,"Sujapur","Malda","TMC","Sabina Yeasmin","Abhiraj Chaudhary",78,1,"","—","—"]
+[54,"Baisnabnagar","Malda","TMC","Chandana Sarkar","Raju Karmakar",67,1,"","—","—"]
+// MURSHIDABAD
+[55,"Farakka","Murshidabad","TMC","Amirul Islam","Sunil Chowdhury",70,1,"","—","—"]
+[56,"Samserganj","Murshidabad","TMC","Nur Alam","Shashthi Charan Ghosh",74,1,"","—","—"]
+[57,"Suti","Murshidabad","TMC","Emani Biswas","Mahabir Ghosh",68,1,"","—","—"]
+[58,"Jangipur","Murshidabad","TMC","Jakir Hossain","—",72,1,"","—","—"]
+[59,"Raghunathganj","Murshidabad","TMC","Janab Akhruzzaman","Surjit Poddar",70,1,"","—","—"]
+[60,"Sagardighi","Murshidabad","TMC","Bayron Biswas","—",63,1,"","—","—"]
+[61,"Lalgola","Murshidabad","TMC","Dr. Abdul Aziz","Amar Kumar Das",75,1,"","—","—"]
+[62,"Bhagabangola","Murshidabad","TMC","Reyaz Hussain Sarkar","Bhaskar Sarkar",65,1,"","—","—"]
+[63,"Raninagar","Murshidabad","SWING","Soumik Hussain","—",43,1,"","—","—"]
+[64,"Murshidabad","Murshidabad","BJP","Shaoni Singha Roy","Gouri Sankar Ghosh",59,1,"","Ashok Dasgupta","Abdul Mannan (AIFB)"]
+[65,"Nabagram","Murshidabad","TMC","Pranab Chandra Das","—",66,1,"SC","—","—"]
+[66,"Khargram","Murshidabad","TMC","Ashish Marjit","—",65,1,"SC","—","Dhrubajyoti Saha (CPI-M)"]
+[67,"Burwan","Murshidabad","TMC","Pratima Rajak","—",66,1,"SC","—","Ananda Das (RSP)"]
+[68,"Kandi","Murshidabad","TMC","Apurba Sarkar","—",64,1,"","—","Dr. Rejaul Karim (CPI)"]
+[69,"Bharatpur","Murshidabad","SWING","Mustafizur Rahaman","—",44,1,"","—","—"]
+[70,"Rejinagar","Murshidabad","SWING","Ataur Rahman","Bapan Ghosh",42,1,"","—","—"]
+[71,"Beldanga","Murshidabad","TMC","Rabiul Alam Chowdhury","Bharat Kumar Jhawar",69,1,"","—","—"]
+[72,"Baharampur","Murshidabad","INC","Naru Gopal Mukherjee","Subrata Maitra",65,1,"","Naru Gopal Mukherjee","Ashok Pal (CPI-M)"]
+[73,"Hariharpara","Murshidabad","TMC","Niamot Sheikh","Tanmoy Biswas",71,1,"","—","—"]
+[74,"Naoda","Murshidabad","SWING","Shahina Mumtaz","Rana Mandal",43,1,"","—","Habibur Rahaman (RSP)"]
+[75,"Domkal","Murshidabad","SWING","Humayun Kabir","Nanda Dulal Pal",43,1,"","—","Mostafijur Rahaman (CPI-M)"]
+[76,"Jalangi","Murshidabad","TMC","Babar Ali","Naba Kumar Sarkar",73,1,"","—","—"]
+
+// ── PHASE 2 (Apr 29) — Seats 77-294 ────────────────────────────────────────
+// NADIA
+[77,"Karimpur","Nadia","TMC","Soham Chakraborty","Samarendranath Ghosh",66,2,"","—","Pravas Majumder (CPI-M)"]
+[78,"Tehatta","Nadia","TMC","Dilip Poddar","—",66,2,"","—","Subodh Biswas (CPI-M)"]
+[79,"Palashipara","Nadia","TMC","Rukbanur Rahman","Anima Dutta",67,2,"","—","—"]
+[80,"Kaliganj","Nadia","TMC","Alifa Ahmed","Bapan Ghosh",65,2,"","—","Sabina Yasmin (CPI-M)"]
+[81,"Nakashipara","Nadia","TMC","Kallol Kha","—",65,2,"","—","—"]
+[82,"Chapra","Nadia","TMC","Jeber Sekh","—",66,2,"","—","—"]
+[83,"Krishnanagar Uttar","Nadia","TMC","Avinabha Bhattacharya","—",67,2,"","—","—"]
+[84,"Nabadwip","Nadia","TMC","Pundarikakshya Saha","—",65,2,"","—","—"]
+[85,"Krishnanagar Dakshin","Nadia","TMC","Ujjwal Biswas","—",65,2,"","Uday Bhan Singh","Sujan Chakraborty (CPI-M)"]
+[86,"Santipur","Nadia","TMC","Braja Kishore Goswami","—",64,2,"","Ajay De","Priyobrata Ghosh (CPI-M)"]
+[87,"Ranaghat Uttar Paschim","Nadia","BJP","Tapas Ghosh","Parthasarathi Chatterjee",65,2,"","—","—"]
+[88,"Krishnaganj","Nadia","BJP","Samir Kumar Poddar","Ashim Biswas",70,2,"SC","—","—"]
+[89,"Ranaghat Uttar Purba","Nadia","BJP","Barnali Dey Roy","Ashim Biswas",67,2,"SC","—","—"]
+[90,"Ranaghat Dakshin","Nadia","SWING","Dr. Sougata Kumar Barman","—",50,2,"SC","—","—"]
+[91,"Chakdaha","Nadia","BJP","Subhankar Singha","Bankim Chandra Ghosh",61,2,"","—","—"]
+[92,"Kalyani","Nadia","TMC","Dr. Atindra Nath Mondal","—",65,2,"SC","—","—"]
+[93,"Haringhata","Nadia","BJP","Dr. Rajib Biswas","Asim Kumar Sarkar",66,2,"SC","—","—"]
+// NORTH 24 PARGANAS
+[94,"Bagda","North 24 Parganas","SWING","Madhupurna Thakur","Soma Thakur",50,2,"SC","—","—"]
+[95,"Bangaon Uttar","North 24 Parganas","BJP","Biswajit Das","—",70,2,"SC","—","—"]
+[96,"Bangaon Dakshin","North 24 Parganas","BJP","Rituparna Addhya","—",68,2,"SC","—","—"]
+[97,"Gaighata","North 24 Parganas","BJP","Narottam Biswas","—",65,2,"SC","—","—"]
+[98,"Swarupnagar","North 24 Parganas","TMC","Bina Mondal","—",65,2,"SC","—","—"]
+[99,"Baduria","North 24 Parganas","TMC","Burhanul Mokkadin","Sukriti Sarkar",70,2,"","—","—"]
+[100,"Habra","North 24 Parganas","TMC","Jyotipriya Mallick","—",67,2,"","—","—"]
+[101,"Ashoknagar","North 24 Parganas","TMC","Narayan Goswami","—",66,2,"","—","—"]
+[102,"Amdanga","North 24 Parganas","TMC","Peerzada Kasem Siddiqui","Arindam Dey",70,2,"","—","—"]
+[103,"Bijpur","North 24 Parganas","TMC","Subodh Adhikary","—",67,2,"","—","—"]
+[104,"Naihati","North 24 Parganas","TMC","Sanat Dey","Sumitro Chaterjee",66,2,"","—","—"]
+[105,"Bhatpara","North 24 Parganas","SWING","Amit Gupta","Pawan Kumar Singh",46,2,"","Manoj Ghosh","Tapas Pal (CPI-M)"]
+[106,"Jagatdal","North 24 Parganas","TMC","Somenath Shyam Ichini","—",64,2,"","—","—"]
+[107,"Noapara","North 24 Parganas","TMC","Trinankur Bhattacharya","—",63,2,"","—","—"]
+[108,"Barrackpore","North 24 Parganas","TMC","Raju Chakrabarty (Raj)","—",62,2,"","Samir Chakraborty","—"]
+[109,"Khardaha","North 24 Parganas","TMC","Devdeep Purohit","—",66,2,"","—","—"]
+[110,"Dum Dum Uttar","North 24 Parganas","TMC","Chandrima Bhattacharya","—",73,2,"","—","—"]
+[111,"Panihati","North 24 Parganas","SWING","Tirthankar Ghosh","—",48,2,"","Siddhartha Roy","—"]
+[112,"Kamarhati","North 24 Parganas","TMC","Madan Mitra","—",66,2,"","—","—"]
+[113,"Baranagar","North 24 Parganas","TMC","Sayantika Banerjee","Sajal Ghosh",67,2,"","—","—"]
+[114,"Dum Dum","North 24 Parganas","TMC","Bratya Basu","—",69,2,"","—","—"]
+[115,"Rajarhat Newtown","North 24 Parganas","TMC","Tapash Chatterjee","—",68,2,"","—","—"]
+[116,"Bidhannagar","North 24 Parganas","TMC","Sujit Bose","—",69,2,"","—","—"]
+[117,"Rajarhat Gopalpur","North 24 Parganas","TMC","Aditi Munshi","—",67,2,"","—","—"]
+[118,"Madhyamgram","North 24 Parganas","TMC","Rathin Ghosh","—",70,2,"","—","—"]
+[119,"Barasat","North 24 Parganas","TMC","Sabyasachi Dutta","—",66,2,"","—","—"]
+[120,"Deganga","North 24 Parganas","TMC","Anisur Rahaman (Bidesh)","Tarun Kanti Ghosh",70,2,"","—","—"]
+[121,"Haroa","North 24 Parganas","TMC","Md. Mufti Abdul Matin","—",70,2,"","—","—"]
+[122,"Minakhan","North 24 Parganas","TMC","Usha Rani Mondal","—",66,2,"SC","—","—"]
+[123,"Sandeshkhali","North 24 Parganas","TMC","Jharna Sardar","—",60,2,"ST","—","—"]
+[124,"Basirhat Dakshin","North 24 Parganas","TMC","Surajit Mitra","—",66,2,"","—","—"]
+[125,"Basirhat Uttar","North 24 Parganas","TMC","Md Tauseef Rehman","Narayan Chandra Mondal",68,2,"","—","—"]
+[126,"Hingalganj","North 24 Parganas","TMC","Ananda Sarkar","—",67,2,"SC","—","—"]
+// SOUTH 24 PARGANAS
+[127,"Gosaba","South 24 Parganas","TMC","Subrata Mondal","—",70,2,"SC","—","—"]
+[128,"Basanti","South 24 Parganas","TMC","Nilima Bishal Mistry","Bikash Sardar",68,2,"SC","—","—"]
+[129,"Kultali","South 24 Parganas","TMC","Ganesh Chandra Mondal","Madhabi Mahalder",68,2,"SC","—","—"]
+[130,"Patharpratima","South 24 Parganas","TMC","Samir Kumar Jana","Asit Kumar Haldar",70,2,"","—","—"]
+[131,"Kakdwip","South 24 Parganas","TMC","Manturam Pakhira","Deepankar Jana",69,2,"","—","—"]
+[132,"Sagar","South 24 Parganas","TMC","Bankim Chandra Hazra","—",69,2,"","—","—"]
+[133,"Kulpi","South 24 Parganas","TMC","Barnali Dhara","—",67,2,"","—","—"]
+[134,"Raidighi","South 24 Parganas","TMC","Tapas Mondal","Palash Rana",67,2,"","—","—"]
+[135,"Mandirbazar","South 24 Parganas","TMC","Joydeb Halder","—",67,2,"SC","—","—"]
+[136,"Jaynagar","South 24 Parganas","TMC","Biswanath Das","—",69,2,"SC","—","—"]
+[137,"Baruipur Purba","South 24 Parganas","TMC","Bivas Sardar","—",67,2,"SC","—","—"]
+[138,"Canning Paschim","South 24 Parganas","TMC","Paresh Ram Das","—",68,2,"SC","—","—"]
+[139,"Canning Purba","South 24 Parganas","TMC","Md. Baharul Islam","Ashim Sapui",68,2,"","—","—"]
+[140,"Baruipur Paschim","South 24 Parganas","TMC","Biman Banerjee","—",66,2,"","—","—"]
+[141,"Magrahat Purba","South 24 Parganas","TMC","Sharmistha Purkait","Uttam Kumar Banik",67,2,"SC","—","—"]
+[142,"Magrahat Paschim","South 24 Parganas","TMC","Shamim Ahmed","—",67,2,"","—","—"]
+[143,"Diamond Harbour","South 24 Parganas","TMC","Pannalal Halder","Dipak Kumar Halder",69,2,"","—","—"]
+[144,"Falta","South 24 Parganas","TMC","Jahangir Khan","Debangshu Panda",67,2,"","—","—"]
+[145,"Satgachia","South 24 Parganas","TMC","Somashree Betal","—",67,2,"","—","—"]
+[146,"Bishnupur","South 24 Parganas","TMC","Dilip Mondal","Viswajit Khan",67,2,"SC","—","—"]
+[147,"Sonarpur Dakshin","South 24 Parganas","SWING","Arundhuti Maitra","—",49,2,"","—","—"]
+[148,"Bhangar","South 24 Parganas","TMC","Saokat Molla","—",65,2,"","—","—"]
+[149,"Kasba","South 24 Parganas","TMC","Javed Ahmed Khan","—",67,2,"","—","—"]
+[150,"Jadavpur","South 24 Parganas","TMC","Debabrata Majumdar","—",65,2,"","Manoranjan Das","Srijib Biswas (CPI-M)"]
+[151,"Sonarpur Uttar","South 24 Parganas","TMC","Firdousi Begum","Debashish Dhar",66,2,"","—","—"]
+[152,"Tollygunge","Kolkata","TMC","Aroop Biswas","—",67,2,"","—","—"]
+[153,"Behala Purba","Kolkata","TMC","Subhasish Chakraborty","—",66,2,"","—","—"]
+[154,"Behala Paschim","Kolkata","TMC","Ratna Chatterjee","—",66,2,"","—","—"]
+[155,"Maheshtala","South 24 Parganas","TMC","Subhasis Das","—",67,2,"","—","—"]
+[156,"Budge Budge","South 24 Parganas","TMC","Ashok Kumar Deb","Dr. Tarun Kumar Adak",67,2,"","—","—"]
+[157,"Metiaburuz","Kolkata","TMC","Abdul Khaleque Molla","Veer Bahadur Singh",72,2,"","—","—"]
+// KOLKATA
+[158,"Kolkata Port","Kolkata","TMC","Firhad Hakim","—",70,2,"","—","—"]
+[159,"Bhabanipur","Kolkata","TMC","Mamata Banerjee","Suvendu Adhikari",71,2,"","—","—"]
+[160,"Rashbehari","Kolkata","TMC","Debashis Kumar","Swapan Das Gupta",65,2,"","Sanjay Chattopadhyay","Bikash Ranjan Bhattacharya (CPI-M)"]
+[161,"Ballygunge","Kolkata","TMC","Sovandeb Chattopadhyay","—",67,2,"","Subhankar Roy","Sujan Chakraborty (CPI-M)"]
+[162,"Chowrangee","Kolkata","TMC","Nayna Bandopadhyay","Santosh Pathak",65,2,"","—","—"]
+[163,"Entally","Kolkata","TMC","Sandipan Saha","—",65,2,"","—","—"]
+[164,"Beleghata","Kolkata","TMC","Kunal Ghosh","—",66,2,"","—","—"]
+[165,"Jorasanko","Kolkata","TMC","Vijay Upadhyay","—",65,2,"","—","—"]
+[166,"Shyampukur","Kolkata","TMC","Dr. Shashi Panja","—",67,2,"","—","—"]
+[167,"Maniktala","Kolkata","TMC","Shreya Pandey","—",66,2,"","—","—"]
+[168,"Kashipur Belgachhia","Kolkata","TMC","Atin Ghosh","—",66,2,"","—","—"]
+// HOWRAH
+[169,"Bally","Howrah","TMC","Kailash Mishra","—",63,2,"","—","—"]
+[170,"Howrah Uttar","Howrah","TMC","Goutam Chowdhury","Umesh Rai",64,2,"","—","—"]
+[171,"Howrah Madhya","Howrah","TMC","Arup Roy","—",65,2,"","—","—"]
+[172,"Shibpur","Howrah","TMC","Dr. Rana Chatterjee","Rudranil Ghosh",63,2,"","—","—"]
+[173,"Howrah Dakshin","Howrah","TMC","Nandita Choudhary","Shyamal Hati",62,2,"","—","—"]
+[174,"Sankrail","Howrah","TMC","Priya Paul","—",66,2,"SC","—","—"]
+[175,"Panchla","Howrah","TMC","Gulshan Mullick","Ranjan Kumar Paul",65,2,"","—","—"]
+[176,"Uluberia Purba","Howrah","TMC","Ritabrata Banerjee","—",67,2,"","—","—"]
+[177,"Uluberia Uttar","Howrah","TMC","Bimal Kumar Das","—",67,2,"SC","—","—"]
+[178,"Uluberia Dakshin","Howrah","TMC","Pulak Roy","Swami Mangalanand Puri",65,2,"","—","—"]
+[179,"Shyampur","Howrah","TMC","Nadebasi Jana","—",66,2,"","—","—"]
+[180,"Bagnan","Howrah","TMC","Arunava Sen","—",66,2,"","—","—"]
+[181,"Amta","Howrah","TMC","Sukanta Paul","Amit Samanta",64,2,"SC","—","—"]
+[182,"Udaynarayanpur","Howrah","TMC","Samir Kumar Panja","—",64,2,"","—","—"]
+[183,"Jagatballavpur","Howrah","TMC","Subir Chatterjee","—",65,2,"","—","—"]
+[184,"Domjur","Howrah","TMC","Tapas Maity","Gobinda Hazra",65,2,"","—","—"]
+// HOOGHLY
+[185,"Uttarpara","Hooghly","BJP","Sirsanya Bandopadhyay","—",58,2,"","—","Tapas Sinha (CPI-M)"]
+[186,"Sreerampur","Hooghly","TMC","Tanmoy Ghosh","—",55,2,"","Dilip Banerjee","Debabrata Bandyopadhyay (CPI-M)"]
+[187,"Champdani","Hooghly","TMC","Arindam Guin","—",63,2,"","—","—"]
+[188,"Singur","Hooghly","TMC","Becharam Manna","—",63,2,"","Rabindra Nath Bhattacharya","Ratan Halder (CPI-M)"]
+[189,"Chandannagar","Hooghly","TMC","Indranil Sen","—",65,2,"","—","—"]
+[190,"Chunchura","Hooghly","TMC","Debangshu Bhattacharya","—",63,2,"","—","—"]
+[191,"Balagarh","Hooghly","TMC","Ranjan Dhara","—",64,2,"SC","—","—"]
+[192,"Pandua","Hooghly","TMC","Samir Chakraborty (Bua)","—",64,2,"","—","—"]
+[193,"Saptagram","Hooghly","TMC","Bidesh Bose","Swaraj Ghosh",63,2,"","—","—"]
+[194,"Chanditala","Hooghly","TMC","Swati Khandoker","—",64,2,"","—","—"]
+[195,"Jangipara","Hooghly","TMC","Snehasis Chakraborty","—",64,2,"SC","—","—"]
+[196,"Haripal","Hooghly","TMC","Dr. Karabi Manna","—",64,2,"SC","—","—"]
+[197,"Dhanekhali","Hooghly","TMC","Asima Patra","—",64,2,"SC","—","—"]
+[198,"Tarakeswar","Hooghly","TMC","Ramendu Singha Roy","Santu Pan",64,2,"","—","—"]
+[199,"Pursurah","Hooghly","TMC","Partha Hazari","Biman Ghosh",63,2,"SC","—","—"]
+[200,"Arambag","Hooghly","TMC","Mita Bag","Hemanta Bag",63,2,"SC","—","Subhash Naskar (CPI-M)"]
+[201,"Goghat","Hooghly","TMC","Dr. Nirmal Maji","Prashanta Dighar",62,2,"SC","—","—"]
+[202,"Khanakul","Hooghly","TMC","Palash Roy","Susanta Ghosh",64,2,"","—","—"]
+// PURBA MEDINIPUR
+[203,"Tamluk","Purba Medinipur","TMC","Dipendra Narayan Roy","—",65,2,"","—","—"]
+[204,"Panskura Purba","Purba Medinipur","TMC","Asim Kumar Maji","Subrata Maity",64,2,"SC","—","—"]
+[205,"Panskura Paschim","Purba Medinipur","TMC","Siraj Khan","Sintu Senapati",64,2,"SC","—","—"]
+[206,"Moyna","Purba Medinipur","TMC","Chandan Mondal","Ashok Dinda",63,2,"","—","—"]
+[207,"Nandakumar","Purba Medinipur","TMC","Sukumar Dey","—",64,2,"","—","—"]
+[208,"Mahisadal","Purba Medinipur","TMC","Tilak Kumar Chakraborty","Subhash Panja",64,2,"","—","—"]
+[209,"Haldia","Purba Medinipur","TMC","Tapasi Mandal","Pradip Kumar Bijoli",62,2,"SC","—","—"]
+[210,"Nandigram","Purba Medinipur","BJP","Pabitra Kar","Suvendu Adhikari",55,2,"","Dipak Mondal","Minakshi Mukherjee (CPI-M)"]
+[211,"Chandipur","Purba Medinipur","TMC","Uttam Barik","Dr. Piyush Shanti Das",63,2,"","—","—"]
+[212,"Patashpur","Purba Medinipur","TMC","Pijus Kanti Panda","Tapan Maity",64,2,"SC","—","—"]
+[213,"Kanthi Uttar","Purba Medinipur","TMC","Debasis Bhunia","Sumita Sinha",64,2,"","—","—"]
+[214,"Bhagabanpur","Purba Medinipur","TMC","Manab Kumar Porua","—",64,2,"","—","—"]
+[215,"Khejuri","Purba Medinipur","TMC","Rabin Chandra Mandal","—",64,2,"SC","—","—"]
+[216,"Kanthi Dakshin","Purba Medinipur","BJP","Tarun Kr Jana","Arup Kumar Das",61,2,"","—","—"]
+[217,"Ramnagar","Purba Medinipur","TMC","Akhil Giri","Chandra Sekhar Mondal",63,2,"","—","—"]
+[218,"Egra","Purba Medinipur","TMC","Tarun Maity","—",65,2,"","—","—"]
+// PASCHIM MEDINIPUR + JHARGRAM
+[219,"Dantan","Paschim Medinipur","TMC","Manik Maity","Ajit Kumar Jana",62,2,"","—","—"]
+[220,"Nayagram","Jhargram","TMC","Dulal Murmu","Amiya Kisku",63,2,"ST","—","—"]
+[221,"Gopiballavpur","Jhargram","TMC","Ajit Mahata","Rajesh Mahto",63,2,"","—","—"]
+[222,"Jhargram","Jhargram","BJP","Mangal Soren","Lakshmikant Sahu",60,2,"ST","—","—"]
+[223,"Keshiary","Paschim Medinipur","TMC","Ramjiban Mandi","Bhadra Hembrem",62,2,"ST","—","—"]
+[224,"Kharagpur Sadar","Paschim Medinipur","BJP","Pradip Sarkar","Dilip Ghosh",62,2,"","—","—"]
+[225,"Narayangarh","Paschim Medinipur","TMC","Pratibha Rani Maity","Rama Prasad Giri",62,2,"","—","—"]
+[226,"Sabang","Paschim Medinipur","TMC","Manas Ranjan Bhunia","Amal Panda",64,2,"","—","—"]
+[227,"Pingla","Paschim Medinipur","TMC","Ajit Maity","—",64,2,"","—","—"]
+[228,"Kharagpur","Paschim Medinipur","BJP","Dinen Roy","Tapan Bhuya",61,2,"","—","—"]
+[229,"Debra","Paschim Medinipur","TMC","Rajib Banerjee","Shubhashish Om",63,2,"","—","—"]
+[230,"Daspur","Paschim Medinipur","TMC","Asis Huda","Tapan Dutta",64,2,"","—","—"]
+[231,"Ghatal","Paschim Medinipur","TMC","Shyamali Sardar","Sital Kapat",63,2,"SC","—","—"]
+[232,"Chandrakona","Paschim Medinipur","TMC","Surjya Kanta Doloi","Sukanta Dolui",63,2,"SC","—","—"]
+[233,"Garbeta","Paschim Medinipur","BJP","Uttara Singha (Hazra)","Pradeep Lodha",59,2,"SC","—","Srikumar Mukherjee (CPI-M)"]
+[234,"Salboni","Paschim Medinipur","TMC","Srikanta Mahata","Biman Mahto",64,2,"ST","—","—"]
+[235,"Keshpur","Paschim Medinipur","TMC","Seuli Saha","Suvendu Samanta",62,2,"SC","—","—"]
+[236,"Medinipur","Paschim Medinipur","TMC","Sujoy Hazra","—",63,2,"","—","—"]
+[237,"Binpur","Jhargram","TMC","Birbaha Hansda","Dr. Pranat Tudu",63,2,"ST","—","—"]
+// PURULIA
+[238,"Bandwan","Purulia","TMC","Rajib Lochan Saren","Labsen Baske",62,2,"ST","—","—"]
+[239,"Balarampur","Purulia","TMC","Shantiram Mahato","Jaladhar Mahto",61,2,"","—","—"]
+[240,"Baghmundi","Purulia","TMC","Sushanta Mahato","—",63,2,"ST","—","—"]
+[241,"Joypur","Purulia","TMC","Arjun Mahato","—",59,2,"","—","—"]
+[242,"Purulia","Purulia","TMC","Sujoy Banerjee","—",57,2,"","Gopal Banerjee","Manoranjan Saren (CPI-M)"]
+[243,"Manbazar","Purulia","TMC","—","Moyna Murmu",62,2,"ST","—","—"]
+[244,"Kashipur","Purulia","BJP","—","Kamalkanta Hansda",58,2,"","—","—"]
+[245,"Para","Purulia","BJP","—","Nadiar Chand Bauri",57,2,"SC","—","—"]
+[246,"Raghunathpur","Purulia","BJP","—","Mamoni Bauri",59,2,"SC","—","—"]
+// BANKURA
+[247,"Saltora","Bankura","BJP","—","Chandana Bauri",60,2,"SC","—","—"]
+[248,"Chhatna","Bankura","SWING","—","Satyanarayan Mukhopadhyay",50,2,"SC","—","—"]
+[249,"Ranibandh","Bankura","TMC","—","Kshudiram Tudu",64,2,"ST","—","—"]
+[250,"Raipur","Bankura","TMC","—","Kshetra Mohan Hansda",64,2,"ST","—","—"]
+[251,"Taldangra","Bankura","SWING","—","Souvik Patra",50,2,"","—","—"]
+[252,"Bankura","Bankura","BJP","—","—",58,2,"","—","—"]
+[253,"Barjora","Bankura","TMC","—","Billeshwar Singha",62,2,"SC","—","—"]
+[254,"Onda","Bankura","BJP","—","Amarnath Shakha",57,2,"SC","—","—"]
+[255,"Bishnupur","Bankura","BJP","—","—",60,2,"","—","—"]
+[256,"Katulpur","Bankura","TMC","—","Laxmikanta Majumdar",64,2,"SC","—","—"]
+[257,"Indus","Bankura","TMC","—","Nirmal Kumar Dhara",63,2,"SC","—","—"]
+[258,"Sonamukhi","Bankura","TMC","—","Dibakar Gharami",62,2,"SC","—","—"]
+// PURBA BARDHAMAN
+[259,"Khandaghosh","Purba Bardhaman","TMC","—","—",64,2,"SC","—","—"]
+[260,"Bardhaman Dakshin","Purba Bardhaman","TMC","—","—",65,2,"","—","—"]
+[261,"Raina","Purba Bardhaman","TMC","—","Subhash Patra",66,2,"SC","—","—"]
+[262,"Jamalpur","Purba Bardhaman","TMC","—","Arun Halder",65,2,"SC","—","—"]
+[263,"Monteswar","Purba Bardhaman","TMC","—","Saikat Panja",66,2,"","—","—"]
+[264,"Kalna","Purba Bardhaman","TMC","—","—",65,2,"SC","—","—"]
+[265,"Memari","Purba Bardhaman","TMC","—","Manav Guha",64,2,"","—","—"]
+[266,"Bardhaman Uttar","Purba Bardhaman","TMC","—","Sanjay Das",66,2,"SC","—","—"]
+[267,"Bhatar","Purba Bardhaman","TMC","—","Soumen Karfa",64,2,"","—","—"]
+[268,"Purbasthali Dakshin","Purba Bardhaman","TMC","—","—",63,2,"SC","—","—"]
+[269,"Purbasthali Uttar","Purba Bardhaman","TMC","—","—",63,2,"","—","—"]
+[270,"Katwa","Purba Bardhaman","TMC","—","—",65,2,"","—","—"]
+[271,"Ketugram","Purba Bardhaman","TMC","—","Anadi Ghosh (Mathura)",64,2,"SC","—","—"]
+[272,"Mangalkot","Purba Bardhaman","TMC","—","—",64,2,"","—","—"]
+[273,"Ausgram","Purba Bardhaman","SWING","—","Kalita Maji",46,2,"SC","—","—"]
+[274,"Galsi","Purba Bardhaman","TMC","—","—",63,2,"SC","—","—"]
+// PASCHIM BARDHAMAN
+[275,"Pandabeswar","Paschim Bardhaman","BJP","—","Jitendra Kumar Tewari",62,2,"","—","—"]
+[276,"Durgapur Purba","Paschim Bardhaman","TMC","—","Chandra Shekhar Banerjee",59,2,"SC","—","—"]
+[277,"Durgapur Paschim","Paschim Bardhaman","SWING","—","Lakshman Chandra Ghorui",46,2,"","—","—"]
+[278,"Raniganj","Paschim Bardhaman","BJP","—","—",60,2,"","—","—"]
+[279,"Jamuria","Paschim Bardhaman","TMC","—","Dr. Bijan Mukherjee",61,2,"SC","—","—"]
+[280,"Asansol Dakshin","Paschim Bardhaman","BJP","—","Agnimitra Paul",62,2,"","—","—"]
+[281,"Asansol Uttar","Paschim Bardhaman","TMC","—","Krishnendu Mukherjee",58,2,"SC","—","—"]
+[282,"Kulti","Paschim Bardhaman","TMC","—","Ajay Kumar Poddar",59,2,"","—","—"]
+[283,"Barabani","Paschim Bardhaman","TMC","—","Arijit Roy",61,2,"ST","—","—"]
+// BIRBHUM
+[284,"Dubrajpur","Birbhum","TMC","—","Anup Kumar Saha",62,2,"SC","—","—"]
+[285,"Suri","Birbhum","TMC","—","Jagannath Chattopadhyay",63,2,"","—","—"]
+[286,"Bolpur","Birbhum","TMC","—","Dilip Kumar Ghosh",63,2,"","—","—"]
+[287,"Nanoor","Birbhum","TMC","—","Khokan Das",64,2,"SC","—","—"]
+[288,"Labhpur","Birbhum","TMC","—","—",64,2,"","—","—"]
+[289,"Sainthia","Birbhum","TMC","—","—",63,2,"SC","—","—"]
+[290,"Mayureswar","Birbhum","TMC","—","Dudh Kumar Mondal",63,2,"","—","—"]
+[291,"Rampurhat","Birbhum","TMC","—","—",64,2,"","—","—"]
+[292,"Hansan","Birbhum","TMC","—","Nikhil Banerjee",63,2,"","—","—"]
+[293,"Nalhati","Birbhum","TMC","—","—",64,2,"","—","—"]
+[294,"Murarai","Birbhum","TMC","—","—",64,2,"","—","—"]
+];
+
+const PARTY_COLORS = {
+  TMC:'#1db87b', BJP:'#f0960a', BGPM:'#8b7fe8',
+  INC:'#4a9eff', LF:'#e84a4a', SWING:'#6b7585'
+};
+
+const WINNER_REASONS = {
+  TMC:'TMC advantage: 2021 stronghold, welfare schemes (Lakshmir Bhandar, Swasthya Sathi), minority consolidation, booth machinery. Based on 2021 result + 2024 LS segment data.',
+  BJP:'BJP advantage: 2024 LS momentum (led 164/294 segments), anti-incumbency (15yr TMC), Hindu/Matua consolidation, SIR deletions reducing Muslim roll, strong candidate profile.',
+  BGPM:'BGPM (TMC-ally): Dominant in Darjeeling hills. Gorkha identity politics, Thapa-Mamata coordination.',
+  INC:'INC: Adhir Ranjan Chowdhury legacy in Baharampur/Murshidabad.',
+  LF:'Left Front residual CPI(M) voter base.',
+  SWING:'Genuinely too close to call. Competing factors — SIR, 2024 LS swing, candidate strength, local dynamics — make this a toss-up.'
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WEST BENGAL 2026 — MONTE CARLO ELECTION SIMULATION ENGINE
+// Runs 10,000 simulations entirely in browser. No API. No surveys.
+// Based on: 2021 results, 2024 LS segments, demographics, SIR, anti-incumbency
+// ─────────────────────────────────────────────────────────────────────────────
+
+const MC = (() => {
+
+  // ── District-level parameters ─────────────────────────────────────────────
+  // Base swing adjustments per district vs 2021 baseline
+  // Positive = BJP gains, Negative = TMC gains
+  // Sources: 2024 LS results, Phase 1 turnout, SIR data, demographic analysis
+  const DISTRICT_PARAMS = {
+    // North Bengal — BJP surge territory
+    'Cooch Behar':        { bjpSwing: +6,  sirImpact: -2, turnoutSignal: +3, musliPct: 25 },
+    'Alipurduar':         { bjpSwing: +5,  sirImpact: -1, turnoutSignal: +3, musliPct: 12 },
+    'Jalpaiguri':         { bjpSwing: +4,  sirImpact: -1, turnoutSignal: +2, musliPct: 15 },
+    'Kalimpong':          { bjpSwing: -5,  sirImpact: 0,  turnoutSignal: 0,  musliPct: 5  }, // BGPM ally
+    'Darjeeling':         { bjpSwing: -3,  sirImpact: 0,  turnoutSignal: +1, musliPct: 5  }, // BGPM ally
+    'Uttar Dinajpur':     { bjpSwing: +2,  sirImpact: -5, turnoutSignal: +2, musliPct: 50 }, // High Muslim, SIR impact
+    'Dakshin Dinajpur':   { bjpSwing: +4,  sirImpact: -3, turnoutSignal: +5, musliPct: 30 }, // Highest turnout
+    'Malda':              { bjpSwing: +3,  sirImpact: -4, turnoutSignal: +3, musliPct: 51 }, // High Muslim
+    // Murshidabad — Muslim fortress + JUP factor
+    'Murshidabad':        { bjpSwing: +2,  sirImpact: -6, turnoutSignal: +3, musliPct: 66, jupFactor: +4 },
+    // Matua belt — BJP gains from CAA
+    'Nadia':              { bjpSwing: +5,  sirImpact: -3, turnoutSignal: +2, musliPct: 28, matuaFactor: +6 },
+    'North 24 Parganas':  { bjpSwing: +3,  sirImpact: -2, turnoutSignal: +2, musliPct: 30, matuaFactor: +4 },
+    // South Bengal — TMC fortress
+    'South 24 Parganas':  { bjpSwing: +2,  sirImpact: -2, turnoutSignal: +1, musliPct: 35 },
+    'Kolkata':            { bjpSwing: +3,  sirImpact: -1, turnoutSignal: +2, musliPct: 20, rgKarFactor: +3 },
+    'Howrah':             { bjpSwing: +2,  sirImpact: -1, turnoutSignal: +1, musliPct: 22 },
+    'Hooghly':            { bjpSwing: +3,  sirImpact: -1, turnoutSignal: +2, musliPct: 18 },
+    // Medinipur area — Suvendu territory
+    'Purba Medinipur':    { bjpSwing: +4,  sirImpact: -1, turnoutSignal: +2, musliPct: 15 },
+    'Paschim Medinipur':  { bjpSwing: +3,  sirImpact: -1, turnoutSignal: +2, musliPct: 18 },
+    'Jhargram':           { bjpSwing: +2,  sirImpact: -1, turnoutSignal: +1, musliPct: 10 },
+    // Jangalmahal
+    'Purulia':            { bjpSwing: +5,  sirImpact: -1, turnoutSignal: +2, musliPct: 8  },
+    'Bankura':            { bjpSwing: +3,  sirImpact: -1, turnoutSignal: +2, musliPct: 10 },
+    // Bardhaman
+    'Purba Bardhaman':    { bjpSwing: +2,  sirImpact: -2, turnoutSignal: +1, musliPct: 22 },
+    'Paschim Bardhaman':  { bjpSwing: +4,  sirImpact: -1, turnoutSignal: +2, musliPct: 18 }, // Coal belt anger
+    // Birbhum — TMC fortress
+    'Birbhum':            { bjpSwing: +1,  sirImpact: -3, turnoutSignal: +1, musliPct: 37 },
+  };
+
+  // ── Seat-level base probabilities ─────────────────────────────────────────
+  // Convert confidence score + winner into TMC win probability
+  // Accounts for: 2021 margin, 2024 swing, candidate strength
+  function baseTMCProbability(seat) {
+    const [no, name, district, winner, tmc, bjp, conf, phase, cat] = seat;
+
+    // Start from stated confidence
+    let prob;
+    switch(winner) {
+      case 'TMC':   prob = conf / 100; break;           // e.g. 65% conf = 0.65 TMC wins
+      case 'BJP':   prob = 1 - (conf / 100); break;     // e.g. 65% conf BJP = 0.35 TMC wins
+      case 'BGPM':  prob = 1 - (conf / 100); break;     // TMC ally, BGPM wins = TMC coalition wins
+      case 'INC':   prob = 0.30; break;                  // INC = low TMC probability
+      case 'LF':    prob = 0.25; break;                  // LF = very low TMC
+      case 'SWING': prob = 0.50 + (conf - 50) * 0.01; break; // Swing = near 50/50
+      default:      prob = 0.50;
+    }
+
+    // Clamp to [0.05, 0.95]
+    return Math.max(0.05, Math.min(0.95, prob));
+  }
+
+  // ── Apply scenario adjustments ────────────────────────────────────────────
+  function adjustedProbability(seat, scenario) {
+    const [no, name, district, winner, tmc, bjp, conf, phase, cat] = seat;
+    let prob = baseTMCProbability(seat);
+    const dp = DISTRICT_PARAMS[district] || { bjpSwing: 0, sirImpact: 0, turnoutSignal: 0, musliPct: 20 };
+
+    // Apply district swing — scaled by scenario severity
+    const swingScale = scenario.swingIntensity;
+    prob -= (dp.bjpSwing * swingScale) / 100;
+
+    // SIR impact — reduced Muslim voter turnout hurts TMC
+    const sirScale = scenario.sirSeverity;
+    prob += (dp.sirImpact * sirScale) / 100;  // negative = hurts TMC
+
+    // Turnout signal — high turnout = anti-incumbency signal
+    const turnoutScale = scenario.turnoutImpact;
+    prob -= (dp.turnoutSignal * turnoutScale) / 100;
+
+    // Welfare scheme loyalty — dampens anti-incumbency
+    const welfareBoost = scenario.welfareRetention;
+    if (cat === 'SC' || cat === 'ST') prob += (0.02 * welfareBoost); // SC/ST benefit from Lakshmir Bhandar
+    if (dp.musliPct > 40) prob += (0.015 * welfareBoost); // High Muslim seats TMC welfare strong
+
+    // JUP factor in Murshidabad — splits Muslim vote
+    if (dp.jupFactor && district === 'Murshidabad') {
+      prob -= (dp.jupFactor * scenario.jupStrength) / 100;
+    }
+
+    // Matua factor — CAA resonance in Nadia/North 24P SC seats
+    if (dp.matuaFactor && cat === 'SC' && (district === 'Nadia' || district === 'North 24 Parganas')) {
+      prob -= (dp.matuaFactor * scenario.matuaSwing) / 100;
+    }
+
+    // RG Kar factor in Kolkata
+    if (dp.rgKarFactor && district === 'Kolkata') {
+      prob -= (dp.rgKarFactor * scenario.rgKarImpact) / 100;
+    }
+
+    // Bengali asmita factor — TMC's "Bengal vs Delhi" narrative
+    prob += scenario.asmiataBoost / 100;
+
+    // Clamp to [0.03, 0.97]
+    return Math.max(0.03, Math.min(0.97, prob));
+  }
+
+  // ── Single simulation run ─────────────────────────────────────────────────
+  function runOnce(scenario) {
+    const results = { TMC: 0, BJP: 0, BGPM: 0, INC: 0, LF: 0, OTHER: 0 };
+    const seatResults = [];
+
+    for (const seat of SEATS) {
+      const [no, name, district, winner, tmc, bjp, conf, phase, cat] = seat;
+      const tmcProb = adjustedProbability(seat, scenario);
+
+      // Add seat-level random noise (±3% std dev for local factors)
+      const noise = gaussianRandom(0, 0.03);
+      const finalProb = Math.max(0.01, Math.min(0.99, tmcProb + noise));
+
+      const rand = Math.random();
+      let result;
+
+      if (winner === 'BGPM') {
+        // BGPM wins unless BJP has massive wave
+        result = rand < 0.85 ? 'BGPM' : 'BJP';
+      } else if (winner === 'INC') {
+        // INC in Baharampur — holds unless TMC consolidation
+        result = rand < 0.65 ? 'INC' : (rand < 0.80 ? 'TMC' : 'BJP');
+      } else {
+        result = rand < finalProb ? 'TMC' : 'BJP';
+      }
+
+      results[result] = (results[result] || 0) + 1;
+      seatResults.push({ no, result, prob: finalProb });
+    }
+
+    return { results, seatResults };
+  }
+
+  // ── Gaussian random number (Box-Muller) ───────────────────────────────────
+  function gaussianRandom(mean, std) {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return mean + std * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  }
+
+  // ── Full Monte Carlo run ──────────────────────────────────────────────────
+  function run(N = 10000, scenario = null) {
+    const defaultScenario = {
+      swingIntensity:  1.0,   // BJP district swing multiplier
+      sirSeverity:     1.0,   // SIR voter deletion impact
+      turnoutImpact:   1.0,   // High turnout = anti-incumbency
+      welfareRetention:1.0,   // TMC welfare loyalty retention
+      jupStrength:     1.0,   // JUP Muslim vote split in Murshidabad
+      matuaSwing:      1.0,   // Matua BJP swing in Nadia/North 24P
+      rgKarImpact:     0.5,   // RG Kar case anti-TMC in Kolkata
+      asmiataBoost:    1.5,   // Bengali identity TMC boost
+    };
+    const s = { ...defaultScenario, ...(scenario || {}) };
+
+    const tmcCounts = new Array(295).fill(0);   // tmcCounts[i] = times TMC won i seats
+    const bjpCounts = new Array(295).fill(0);
+    const seatWins = {};  // seatWins[no] = {TMC: X, BJP: Y, total: N}
+
+    // Init seat wins
+    for (const seat of SEATS) {
+      seatWins[seat[0]] = { TMC: 0, BJP: 0, BGPM: 0, INC: 0, OTHER: 0 };
+    }
+
+    let tmcTotal = 0, bjpTotal = 0;
+
+    for (let i = 0; i < N; i++) {
+      const { results, seatResults } = runOnce(s);
+      const tmc = results.TMC + (results.BGPM || 0); // count BGPM as TMC alliance
+      const bjp = results.BJP || 0;
+      tmcCounts[tmc]++;
+      bjpCounts[bjp]++;
+      tmcTotal += tmc;
+      bjpTotal += bjp;
+
+      for (const sr of seatResults) {
+        if (seatWins[sr.no]) {
+          seatWins[sr.no][sr.result] = (seatWins[sr.no][sr.result] || 0) + 1;
+        }
+      }
+    }
+
+    // ── Compute statistics ─────────────────────────────────────────────────
+    const tmcMean = tmcTotal / N;
+    const bjpMean = bjpTotal / N;
+
+    // TMC majority probability
+    const tmcMajorityProb = tmcCounts.slice(148).reduce((a, b) => a + b, 0) / N;
+
+    // Confidence intervals (5th and 95th percentile)
+    let cumTMC = 0, tmcLow = 0, tmcHigh = 0;
+    for (let i = 0; i <= 294; i++) {
+      cumTMC += tmcCounts[i];
+      if (cumTMC / N >= 0.05 && tmcLow === 0) tmcLow = i;
+      if (cumTMC / N >= 0.95 && tmcHigh === 0) { tmcHigh = i; break; }
+    }
+
+    let cumBJP = 0, bjpLow = 0, bjpHigh = 0;
+    for (let i = 0; i <= 294; i++) {
+      cumBJP += bjpCounts[i];
+      if (cumBJP / N >= 0.05 && bjpLow === 0) bjpLow = i;
+      if (cumBJP / N >= 0.95 && bjpHigh === 0) { bjpHigh = i; break; }
+    }
+
+    // Per-seat win probability
+    const seatProbs = {};
+    for (const seat of SEATS) {
+      const sw = seatWins[seat[0]];
+      seatProbs[seat[0]] = {
+        tmcProb: Math.round((sw.TMC || 0) / N * 100),
+        bjpProb: Math.round((sw.BJP || 0) / N * 100),
+        bgpmProb: Math.round((sw.BGPM || 0) / N * 100),
+        incProb: Math.round((sw.INC || 0) / N * 100),
+        predicted: getPredicted(sw, N),
+      };
+    }
+
+    // Distribution histogram (group into bins of 5)
+    const histogram = [];
+    for (let i = 100; i <= 250; i += 5) {
+      histogram.push({
+        seats: i,
+        tmcFreq: tmcCounts.slice(i, i + 5).reduce((a, b) => a + b, 0) / N,
+        bjpFreq: bjpCounts.slice(i, i + 5).reduce((a, b) => a + b, 0) / N,
+      });
+    }
+
+    return {
+      N,
+      tmcMean: Math.round(tmcMean),
+      bjpMean: Math.round(bjpMean),
+      tmcRange: `${tmcLow}–${tmcHigh}`,
+      bjpRange: `${bjpLow}–${bjpHigh}`,
+      tmcMajorityProb: Math.round(tmcMajorityProb * 100),
+      bjpMajorityProb: Math.round((1 - tmcMajorityProb) * 100),
+      histogram,
+      seatProbs,
+      tmcCounts,
+      bjpCounts,
+      scenario: s,
+      runAt: new Date().toISOString(),
+    };
+  }
+
+  function getPredicted(sw, N) {
+    const entries = Object.entries(sw).filter(([k]) => k !== 'OTHER');
+    entries.sort((a, b) => b[1] - a[1]);
+    return entries[0][0];
+  }
+
+  // ── Scenario presets ──────────────────────────────────────────────────────
+  const SCENARIOS = {
+    base: {
+      label: 'Base case',
+      desc: 'Current signals, balanced assumptions',
+      params: {},
+    },
+    tmcWave: {
+      label: 'TMC wave',
+      desc: 'Bengali asmita resonates, BJP underperforms, welfare loyalty strong',
+      params: { swingIntensity: 0.4, welfareRetention: 1.5, asmiataBoost: 4, sirSeverity: 0.5, turnoutImpact: 0.5 },
+    },
+    bjpSurge: {
+      label: 'BJP surge',
+      desc: 'Record turnout = anti-incumbency wave, SIR bites hard, Matua consolidates',
+      params: { swingIntensity: 1.6, sirSeverity: 1.5, turnoutImpact: 1.6, matuaSwing: 1.5, welfareRetention: 0.6, asmiataBoost: 0 },
+    },
+    hung: {
+      label: 'Hung assembly',
+      desc: 'Tight race, JUP splits Muslim votes, BJP surges to near-majority',
+      params: { swingIntensity: 1.3, jupStrength: 1.8, sirSeverity: 1.3, matuaSwing: 1.3, turnoutImpact: 1.3, welfareRetention: 0.8 },
+    },
+  };
+
+  return { run, SCENARIOS, baseTMCProbability, adjustedProbability, DISTRICT_PARAMS };
+
+})();
+
+// Bengal Verdict 2026 — App with Monte Carlo Simulation Engine
+// No external AI API needed. Runs 10,000 simulations in browser.
+
+const API = '';
+let sortKey = 'no', sortAsc = true, selectedRow = null;
+let currentStage = 'post-phase1';
+let lastMCResult = null;
+
+// ── Clock ─────────────────────────────────────────────────────────────────────
+function updateClock() {
+  const el = document.getElementById('clock');
+  if (el) el.textContent = new Date().toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+  }) + ' IST';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.getElementById('panel-ai').style.display  = tab === 'ai' ? 'block' : 'none';
+  document.getElementById('panel-mc').style.display  = tab === 'mc' ? 'block' : 'none';
+  document.getElementById('tab-ai').classList.toggle('active', tab === 'ai');
+  document.getElementById('tab-mc').classList.toggle('active', tab === 'mc');
+  // Auto-run simulation when switching to MC tab for first time
+  if (tab === 'mc' && !lastMCResult) runSimulation();
+}
+
+// ── AI Analysis (Gemini) ──────────────────────────────────────────────────────
+async function fetchAIAnalysis() {
+  const apiKey = null; // Set GEMINI_API_KEY on server; this calls the proxy
+  try {
+    const r = await fetch(`${API}/api/intelligence`);
+    if (!r.ok) throw new Error('No AI endpoint');
+    const data = await r.json();
+    return data;
+  } catch(e) {
+    return null;
+  }
+}
+
+async function refreshAI() {
+  const btn = document.getElementById('aiRefreshBtn');
+  const textEl = document.getElementById('aiText');
+  if (btn) { btn.textContent = '↻ Refreshing…'; btn.style.opacity = '0.6'; }
+  if (textEl) textEl.innerHTML = `
+    <div class="shimmer" style="width:95%"></div>
+    <div class="shimmer" style="width:80%;margin-top:6px"></div>
+    <div class="shimmer" style="width:88%;margin-top:6px"></div>`;
+
+  try {
+    // Try server intelligence endpoint first
+    const data = await fetchAIAnalysis();
+    if (data && data.summary && !data.summary.includes('error') && !data.summary.includes('unavailable')) {
+      renderAI(data);
+    } else {
+      // Fallback: generate summary from Monte Carlo result
+      renderAIFromMC();
+    }
+  } catch(e) {
+    renderAIFromMC();
+  }
+  if (btn) { btn.textContent = '↻ Refresh AI'; btn.style.opacity = '1'; }
+}
+
+function renderAI(data) {
+  const textEl = document.getElementById('aiText');
+  const updEl = document.getElementById('aiUpdated');
+  const sigEl = document.getElementById('aiSignals');
+  if (textEl) textEl.textContent = data.summary || '';
+  if (updEl && data.updatedAt) {
+    updEl.textContent = 'Updated ' + new Date(data.updatedAt).toLocaleTimeString('en-IN',
+      {timeZone:'Asia/Kolkata', hour:'2-digit', minute:'2-digit'}) + ' IST';
+  }
+  if (sigEl && data.signals && data.signals.length > 0) {
+    sigEl.style.display = 'block';
+    sigEl.innerHTML = `
+      <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin:12px 0 8px">Live signals</div>
+      ${data.signals.map(s => `
+        <div style="display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:10px;padding:2px 6px;border-radius:4px;flex-shrink:0;font-family:var(--mono);
+            background:${s.impact==='TMC'?'var(--tmc-dim)':s.impact==='BJP'?'var(--bjp-dim)':'var(--swing-dim)'};
+            color:${s.impact==='TMC'?'var(--tmc)':s.impact==='BJP'?'var(--bjp)':'var(--swing)'}">
+            ${s.impact}</span>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:var(--text)">${s.headline}</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5">${s.detail}</div>
+          </div>
+        </div>`).join('')}`;
+  } else if (sigEl) {
+    sigEl.style.display = 'none';
+  }
+}
+
+function renderAIFromMC() {
+  // Generate a human-readable summary from the Monte Carlo result
+  const textEl = document.getElementById('aiText');
+  const updEl = document.getElementById('aiUpdated');
+  const sigEl = document.getElementById('aiSignals');
+  if (sigEl) sigEl.style.display = 'none';
+
+  if (lastMCResult) {
+    const r = lastMCResult;
+    const scenario = document.getElementById('scenarioSelect')?.value || 'base';
+    const scenarioLabel = MC.SCENARIOS[scenario]?.label || 'Base case';
+    const summary = `Monte Carlo simulation (${r.N.toLocaleString()} runs, ${scenarioLabel} scenario): ` +
+      `TMC is projected to win ${r.tmcMean} seats (90% CI: ${r.tmcRange}), while BJP wins ${r.bjpMean} seats (90% CI: ${r.bjpRange}). ` +
+      `TMC retains majority in ${r.tmcMajorityProb}% of simulations. ` +
+      `Key uncertainties: SIR voter deletions in Muslim-majority constituencies, Matua consolidation in Nadia/North 24 Parganas, ` +
+      `JUP vote split in Murshidabad, and whether the record 91.58% Phase 1 turnout signals anti-incumbency or TMC mobilisation. ` +
+      `Switch to the Monte Carlo tab for the full probability distribution.`;
+    if (textEl) textEl.textContent = summary;
+    if (updEl) updEl.textContent = 'Generated from simulation · ' +
+      new Date().toLocaleTimeString('en-IN', {timeZone:'Asia/Kolkata', hour:'2-digit', minute:'2-digit'}) + ' IST';
+  } else {
+    if (textEl) textEl.textContent =
+      'Click "Refresh AI" to load the latest analysis, or switch to the Monte Carlo tab to run simulations directly in your browser — no API key needed.';
+  }
+}
+
+// ── Monte Carlo ───────────────────────────────────────────────────────────────
+function runSimulation() {
+  const btn = document.getElementById('simBtn');
+  if (btn) { btn.textContent = '↻ Running…'; btn.style.opacity = '0.6'; btn.disabled = true; }
+  setTimeout(() => {
+    const scenarioKey = document.getElementById('scenarioSelect')?.value || 'base';
+    const scenario = MC.SCENARIOS[scenarioKey];
+    const result = MC.run(10000, scenario.params);
+    lastMCResult = result;
+    renderSimulation(result, scenario);
+    updateMetrics(result);
+    renderTable();
+    if (btn) { btn.textContent = '↻ Simulate'; btn.style.opacity = '1'; btn.disabled = false; }
+  }, 50);
+}
+
+function renderSimulation(r, scenario) {
+  const tCol = '#1db87b', bCol = '#f0960a';
+  const el = document.getElementById('mcSummary');
+  if (el) {
+    el.innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin-bottom:12px">
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:4px">TMC median</div>
+          <div style="font-size:24px;font-weight:300;color:${tCol};font-family:'Playfair Display',serif">${r.tmcMean}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">90% CI: ${r.tmcRange}</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:4px">BJP median</div>
+          <div style="font-size:24px;font-weight:300;color:${bCol};font-family:'Playfair Display',serif">${r.bjpMean}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">90% CI: ${r.bjpRange}</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:4px">TMC majority</div>
+          <div style="font-size:24px;font-weight:300;color:${r.tmcMajorityProb>50?tCol:bCol};font-family:'Playfair Display',serif">${r.tmcMajorityProb}%</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">probability</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:4px">BJP majority</div>
+          <div style="font-size:24px;font-weight:300;color:#6b7585;font-family:'Playfair Display',serif">${r.bjpMajorityProb}%</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">probability</div>
+        </div>
+      </div>
+      <div style="height:5px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:4px">
+        <div style="height:100%;width:${r.tmcMajorityProb}%;background:linear-gradient(90deg,${tCol},#5dcaa5);border-radius:5px;transition:width 0.8s ease"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted)">
+        <span style="color:${tCol}">TMC majority: ${r.tmcMajorityProb}%</span>
+        <span style="color:${bCol}">BJP majority: ${r.bjpMajorityProb}%</span>
+      </div>`;
+  }
+  drawHistogram(r);
+  const desc = document.getElementById('mcScenarioDesc');
+  if (desc) desc.innerHTML = `<strong style="color:var(--text)">${scenario.label}:</strong> ${scenario.desc}`;
+  const upd = document.getElementById('mcUpdated');
+  if (upd) upd.textContent = `${r.N.toLocaleString()} simulations · ${new Date().toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit'})} IST`;
+}
+
+function drawHistogram(r) {
+  const canvas = document.getElementById('mcChart');
+  if (!canvas || !r.histogram) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.offsetWidth || 600;
+  canvas.width = W * dpr;
+  canvas.height = 80 * dpr;
+  ctx.scale(dpr, dpr);
+  const H = 80;
+  ctx.clearRect(0, 0, W, H);
+
+  const bins = r.histogram;
+  const maxF = Math.max(...bins.map(b => Math.max(b.tmcFreq, b.bjpFreq)));
+  const bW = W / bins.length;
+
+  bins.forEach((bin, i) => {
+    const x = i * bW;
+    // TMC
+    const tH = (bin.tmcFreq / maxF) * (H - 18);
+    const tG = ctx.createLinearGradient(0, H - 18 - tH, 0, H - 18);
+    tG.addColorStop(0, 'rgba(29,184,123,0.85)');
+    tG.addColorStop(1, 'rgba(29,184,123,0.25)');
+    ctx.fillStyle = tG;
+    ctx.fillRect(x + 1, H - 18 - tH, bW * 0.46, tH);
+    // BJP
+    const bH = (bin.bjpFreq / maxF) * (H - 18);
+    const bG = ctx.createLinearGradient(0, H - 18 - bH, 0, H - 18);
+    bG.addColorStop(0, 'rgba(240,150,10,0.85)');
+    bG.addColorStop(1, 'rgba(240,150,10,0.25)');
+    ctx.fillStyle = bG;
+    ctx.fillRect(x + bW * 0.51, H - 18 - bH, bW * 0.46, bH);
+  });
+
+  // Majority line
+  const majX = ((148 - 100) / 150) * W;
+  ctx.strokeStyle = 'rgba(200,169,110,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath(); ctx.moveTo(majX, 0); ctx.lineTo(majX, H - 18); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Median markers
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.textAlign = 'center';
+  const tmcX = Math.min(W - 22, Math.max(22, ((r.tmcMean - 100) / 150) * W));
+  ctx.fillStyle = 'rgba(29,184,123,0.9)';
+  ctx.fillRect(tmcX - 0.5, 0, 1.5, H - 18);
+  ctx.fillText(r.tmcMean, tmcX, H - 4);
+
+  const bjpX = Math.min(W - 22, Math.max(22, ((r.bjpMean - 100) / 150) * W));
+  ctx.fillStyle = 'rgba(240,150,10,0.9)';
+  ctx.fillRect(bjpX - 0.5, 0, 1.5, H - 18);
+  ctx.fillText(r.bjpMean, bjpX, H - 4);
+}
+
+// ── Metrics ───────────────────────────────────────────────────────────────────
+function computeCounts() {
+  const c = {};
+  SEATS.forEach(s => { c[s[3]] = (c[s[3]] || 0) + 1; });
+  return c;
+}
+
+function animateNum(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = `<span class="number-tick">${val}</span>`;
+}
+
+function updateMetrics(mc) {
+  const c = computeCounts();
+  const tmcEl = document.getElementById('m-tmc');
+  const bjpEl = document.getElementById('m-bjp');
+  if (tmcEl) tmcEl.innerHTML = `<span class="number-tick">${mc ? mc.tmcRange : (c.TMC||0)}</span>`;
+  if (bjpEl) bjpEl.innerHTML = `<span class="number-tick">${mc ? mc.bjpRange : (c.BJP||0)}</span>`;
+  const oth = (c.BGPM||0)+(c.INC||0)+(c.LF||0);
+  animateNum('m-oth', oth);
+  animateNum('m-swing', c.SWING||0);
+  const sub = document.getElementById('m-oth-sub');
+  if (sub) sub.textContent = `BGPM·${c.BGPM||0}  INC·${c.INC||0}  LF·${c.LF||0}`;
+
+  const total = 294;
+  const tV = mc ? mc.tmcMean : (c.TMC||0);
+  const bV = mc ? mc.bjpMean : (c.BJP||0);
+  const oV = oth;
+  const sV = Math.max(0, total - tV - bV - oV);
+
+  [['sb-tmc',tV,'leg-tmc'],['sb-bjp',bV,'leg-bjp'],
+   ['sb-bgpm',c.BGPM,'leg-bgpm'],['sb-inc',c.INC,'leg-inc'],
+   ['sb-lf',c.LF,'leg-lf'],['sb-swing',sV,'leg-sw']
+  ].forEach(([id,val,legId]) => {
+    const v = val||0;
+    const el = document.getElementById(id);
+    if (el) { el.style.width=(v/total*100).toFixed(2)+'%'; el.textContent=v>=15?v:''; }
+    const leg = document.getElementById(legId);
+    if (leg) leg.textContent=`(${v})`;
+  });
+}
+
+// ── Stage banner ──────────────────────────────────────────────────────────────
+function updateStageBanner(status) {
+  if (!status) return;
+  currentStage = status.stage;
+  const el = document.getElementById('ph2status');
+  if (el) {
+    const labels = {
+      'pre-election':    'Apr 29 · 142 seats · Upcoming',
+      'phase1-voting':   'Apr 29 · 142 seats · Upcoming',
+      'post-phase1':     'Apr 29 · 142 seats · Upcoming',
+      'phase2-voting':   `<span style="color:#f0960a;font-weight:500">● Voting NOW — Apr 29</span>`,
+      'post-phase2':     `Apr 29 · 142 seats · <span style="color:#1db87b">✓ Voted</span>`,
+      'exit-polls-live': `<span style="color:#f0960a;font-weight:500">EXIT POLLS LIVE</span>`,
+      'results-live':    `<span style="color:#1db87b;font-weight:500">RESULTS COUNTING — May 4</span>`,
+    };
+    el.innerHTML = labels[status.stage] || el.innerHTML;
+  }
+  if (['exit-polls-live','results-live'].includes(status.stage) && !document.getElementById('exitPollBanner')) {
+    const b = document.createElement('div');
+    b.id = 'exitPollBanner';
+    b.style.cssText = 'background:rgba(240,150,10,0.1);border:1px solid rgba(240,150,10,0.35);border-radius:10px;padding:14px 20px;margin-bottom:24px;font-size:14px;font-weight:500;color:#f0d080;text-align:center;animation:fadeIn 0.4s ease';
+    b.textContent = status.stage === 'results-live'
+      ? '🗳️ RESULTS ARE BEING COUNTED — May 4, 2026. Simulations updating live.'
+      : '📊 EXIT POLLS ARE LIVE. Simulations updated with exit poll data. Results: May 4.';
+    document.querySelector('.hero')?.prepend(b);
+  }
+}
+
+// ── News ──────────────────────────────────────────────────────────────────────
+function renderNews(data) {
+  const el = document.getElementById('newsFeed');
+  if (!el) return;
+  if (!data.items || data.items.length === 0) {
+    el.innerHTML = '<div class="news-loading">No headlines right now.</div>';
+    return;
+  }
+  el.innerHTML = data.items.slice(0,10).map(item => `
+    <div class="news-item">
+      <div class="news-title"><a href="${item.link}" target="_blank" rel="noopener">${item.title}</a></div>
+      <div class="news-meta">${item.src||'News'}${item.pub?' · '+new Date(item.pub).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}):''}</div>
+    </div>`).join('');
+  const age = document.getElementById('newsAge');
+  if (age && data.fetchedAt) age.textContent = 'at '+new Date(data.fetchedAt).toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit'});
+}
+
+// ── District breakdown ────────────────────────────────────────────────────────
+function buildDistrictBreakdown() {
+  const dm = {};
+  SEATS.forEach(s => {
+    if (!dm[s[2]]) dm[s[2]] = {TMC:0,BJP:0,OTH:0};
+    if (s[3]==='TMC') dm[s[2]].TMC++;
+    else if (s[3]==='BJP') dm[s[2]].BJP++;
+    else dm[s[2]].OTH++;
+  });
+  const el = document.getElementById('districtBreakdown');
+  if (el) el.innerHTML = Object.entries(dm)
+    .sort((a,b)=>(b[1].TMC+b[1].BJP)-(a[1].TMC+a[1].BJP))
+    .map(([d,v])=>`
+      <div class="district-row">
+        <div class="district-name">${d}</div>
+        <div class="district-seats">
+          <span class="ds-tmc">T:${v.TMC}</span>
+          <span class="ds-bjp">B:${v.BJP}</span>
+          ${v.OTH>0?`<span style="color:var(--bgpm)">O:${v.OTH}</span>`:''}
+        </div>
+      </div>`).join('');
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+function buildDistrictFilter() {
+  const sel = document.getElementById('filterDistrict');
+  if (!sel) return;
+  [...new Set(SEATS.map(s=>s[2]))].sort().forEach(d => {
+    const o = document.createElement('option');
+    o.value=d; o.textContent=d; sel.appendChild(o);
+  });
+}
+
+function filterTable() { renderTable(); }
+
+function sortBy(key) {
+  sortAsc = sortKey===key ? !sortAsc : true;
+  sortKey = key;
+  renderTable();
+}
+
+function renderTable() {
+  const q  = (document.getElementById('searchInput')?.value||'').toLowerCase().trim();
+  const fp = document.getElementById('filterParty')?.value||'';
+  const fd = document.getElementById('filterDistrict')?.value||'';
+  const fph= document.getElementById('filterPhase')?.value||'';
+  const km = {no:0,name:1,district:2,winner:3,conf:6,phase:7};
+
+  const list = SEATS
+    .filter(s=>
+      (!q||s[1].toLowerCase().includes(q)||s[4].toLowerCase().includes(q)||s[5].toLowerCase().includes(q))&&
+      (!fp||s[3]===fp)&&(!fd||s[2]===fd)&&(!fph||s[7]===parseInt(fph))
+    )
+    .sort((a,b)=>{
+      const ki=km[sortKey]??0;
+      const va=a[ki],vb=b[ki];
+      return sortAsc?(typeof va==='string'?va.localeCompare(vb):va-vb):(typeof va==='string'?vb.localeCompare(va):vb-va);
+    });
+
+  const tbody = document.getElementById('tblBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  list.forEach(s => {
+    const [no,name,district,winner,tmc,bjp,conf,phase,cat] = s;
+    const color = PARTY_COLORS[winner]||'#6b7585';
+
+    // Get MC probability for this seat if available
+    let mcProb = '';
+    if (lastMCResult && lastMCResult.seatProbs[no]) {
+      const sp = lastMCResult.seatProbs[no];
+      const pct = winner==='BJP' ? sp.bjpProb : (winner==='BGPM' ? sp.bgpmProb : (winner==='INC' ? sp.incProb : sp.tmcProb));
+      mcProb = `<span style="font-size:9px;font-family:'JetBrains Mono',monospace;color:${color};margin-left:4px">${pct}%</span>`;
+    }
+
+    const tr = document.createElement('tr');
+    if (selectedRow===no) tr.classList.add('selected');
+    tr.onclick = ()=>showDetail(no-1);
+    const inc = (s[9] && s[9]!=="—") ? s[9] : "";
+    const lf  = s[10] && s[10]!=='—' ? s[10] : '';
+    const otherCands = [inc?`INC: ${inc}`:'', lf?`LF: ${lf}`:''].filter(Boolean).join(' · ');
+    tr.innerHTML = `
+      <td><span class="seat-no">${no}</span></td>
+      <td>
+        <span class="seat-name">${name}</span>${cat?`<span class="seat-cat"> ${cat}</span>`:''}
+        ${otherCands?`<div style="font-size:10px;color:var(--subtle);margin-top:2px">${otherCands}</div>`:''}
+      </td>
+      <td><span class="seat-district">${district}</span></td>
+      <td><span class="winner-badge w-${winner.toLowerCase()}">${winner}</span>${mcProb}</td>
+      <td><span class="cand-name" title="${tmc}">${tmc}</span></td>
+      <td><span class="cand-name" title="${bjp}">${bjp}</span></td>
+      <td><div class="conf-wrap">
+        <span class="conf-num">${conf}%</span>
+        <div class="conf-bar"><div class="conf-fill" style="width:${conf}%;background:${color}"></div></div>
+      </div></td>
+      <td><span class="phase-tag">Ph ${phase}</span></td>`;
+    tbody.appendChild(tr);
+  });
+
+  const cnt = document.getElementById('tblCount');
+  if (cnt) cnt.textContent = `${list.length} of ${SEATS.length} seats`;
+}
+
+// ── Detail panel ──────────────────────────────────────────────────────────────
+function showDetail(idx) {
+  const s = SEATS[idx];
+  if (!s) return;
+  const [no,name,district,winner,tmc,bjp,conf,phase,cat] = s;
+  selectedRow = no;
+  renderTable();
+
+  const color = PARTY_COLORS[winner]||'#6b7585';
+  document.getElementById('dp-name').textContent = name;
+  document.getElementById('dp-meta').textContent =
+    `#${no} · ${district}${cat?' · '+cat:''} · Phase ${phase} · Model confidence: ${conf}%`;
+
+  // MC probabilities for this seat
+  let mcInfo = '';
+  if (lastMCResult && lastMCResult.seatProbs[no]) {
+    const sp = lastMCResult.seatProbs[no];
+    mcInfo = `
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:10px">
+        <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:8px">Monte Carlo simulation (${lastMCResult.N.toLocaleString()} runs)</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <span style="font-size:13px;color:#1db87b">TMC wins: <strong>${sp.tmcProb}%</strong></span>
+          <span style="font-size:13px;color:#f0960a">BJP wins: <strong>${sp.bjpProb}%</strong></span>
+          ${sp.bgpmProb>0?`<span style="font-size:13px;color:#8b7fe8">BGPM: <strong>${sp.bgpmProb}%</strong></span>`:''}
+        </div>
+        <div style="height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:8px">
+          <div style="height:100%;width:${sp.tmcProb}%;background:#1db87b;border-radius:4px;transition:width 0.6s"></div>
+        </div>
+      </div>`;
+  }
+
+  const incCand = s[9] && s[9]!=='—' ? s[9] : '—';
+  const lfCand  = s[10] && s[10]!=='—' ? s[10] : '—';
+  document.getElementById('dp-grid').innerHTML = `
+    ${mcInfo}
+    <div class="detail-stat"><div class="detail-stat-label">Predicted winner</div>
+      <div class="detail-stat-val" style="color:${color}">${winner}</div></div>
+    <div class="detail-stat"><div class="detail-stat-label">Model confidence</div>
+      <div class="detail-stat-val">${conf}%</div></div>
+    <div class="detail-stat"><div class="detail-stat-label">TMC candidate</div>
+      <div class="detail-stat-val" style="font-size:13px">${tmc}</div></div>
+    <div class="detail-stat"><div class="detail-stat-label">BJP candidate</div>
+      <div class="detail-stat-val" style="font-size:13px">${bjp}</div></div>
+    <div class="detail-stat"><div class="detail-stat-label">INC candidate</div>
+      <div class="detail-stat-val" style="font-size:13px;color:var(--inc)">${incCand}</div></div>
+    <div class="detail-stat"><div class="detail-stat-label">Left Front candidate</div>
+      <div class="detail-stat-val" style="font-size:13px;color:var(--lf)">${lfCand}</div></div>`;
+
+  document.getElementById('dp-reason').textContent = WINNER_REASONS[winner]||WINNER_REASONS.TMC;
+  document.getElementById('dp-actions').innerHTML = `
+    <button class="detail-btn" onclick="copyPrompt('Analyse ${name} constituency WB 2026: candidates, 2021 result, 2024 LS segment, local factors')">Copy analysis prompt</button>
+    <button class="detail-btn" onclick="closeDetail()">Close</button>`;
+
+  document.getElementById('detailPanel')?.classList.add('open');
+  document.getElementById('detailPanel')?.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel')?.classList.remove('open');
+  selectedRow = null;
+  renderTable();
+}
+
+function copyPrompt(text) {
+  navigator.clipboard?.writeText(text)
+    .then(()=>showToast('Prompt copied to clipboard'))
+    .catch(()=>showToast(text.substring(0,80)+'…'));
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ── Full refresh (news + status) ──────────────────────────────────────────────
+async function fullRefresh() {
+  const btn = document.getElementById('refreshBtn');
+  if (btn) { btn.classList.add('spinning'); btn.textContent = '↻ Refreshing…'; }
+
+  try {
+    const [news, status] = await Promise.allSettled([
+      fetch(`${API}/api/news`).then(r=>r.json()),
+      fetch(`${API}/api/status`).then(r=>r.json()),
+    ]);
+    if (news.status==='fulfilled') renderNews(news.value);
+    if (status.status==='fulfilled') updateStageBanner(status.value);
+    showToast('News updated');
+  } catch(e) { /* silent */ }
+
+  if (btn) { btn.classList.remove('spinning'); btn.textContent = '↻ Refresh'; }
+}
+
+// Soft background pull every 5 min for news
+setInterval(async () => {
+  try {
+    const [news, status] = await Promise.allSettled([
+      fetch(`${API}/api/news`).then(r=>r.json()),
+      fetch(`${API}/api/status`).then(r=>r.json()),
+    ]);
+    if (news.status==='fulfilled') renderNews(news.value);
+    if (status.status==='fulfilled') updateStageBanner(status.value);
+  } catch(e) {}
+}, 5 * 60 * 1000);
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+function init() {
+  buildDistrictFilter();
+  updateMetrics(null);
+  renderTable();
+  buildDistrictBreakdown();
+  // Start on AI tab — load AI analysis
+  switchTab('ai');
+  refreshAI();
+  // Fetch news and status
+  fetch(`${API}/api/news`).then(r=>r.json()).then(renderNews).catch(()=>{});
+  fetch(`${API}/api/status`).then(r=>r.json()).then(updateStageBanner).catch(()=>{});
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
 </body>
 </html>
