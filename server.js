@@ -202,7 +202,7 @@ Respond ONLY in this JSON format (no markdown, no explanation outside the JSON):
 }`;
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
     let r, attempts = 0;
     while (attempts < 3) {
       r = await fetch(url, {
