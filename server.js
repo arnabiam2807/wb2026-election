@@ -170,35 +170,41 @@ async function buildIntelligence() {
     'results-live':    'RESULTS ARE BEING COUNTED RIGHT NOW on May 4.',
   }[status.stage] || '';
 
-  const prompt = `You are a senior Indian election analyst. Current stage: ${status.stage}.
+  const prompt = `You are a senior independent Indian election analyst. You do NOT trust or cite any paid opinion polls or surveys. You make your own judgment based purely on raw data and ground signals.
+
+Current election stage: ${status.stage}
 ${stageContext}
 
-LATEST NEWS HEADLINES (last fetched ${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST):
+TODAY'S NEWS HEADLINES (${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST):
 ${headlines || 'No headlines available.'}
 
 ${exitData ? `EXIT POLL / RESULTS DATA:\n${exitData}` : ''}
 
-ESTABLISHED CONTEXT:
-- WB 2026 Assembly Election: 294 seats, majority = 148
-- Phase 1 (Apr 23): 152 seats, 92.35% turnout — highest ever in West Bengal
-- Phase 2 (Apr 29): 142 seats
-- Results: May 4, 2026
-- Pre-poll model: TMC ~175 seats, BJP ~93 seats (based on POLIQ + constituency data)
-- Key factors: SIR deleted 9M voters (~65% Muslim), anti-incumbency (15 yrs TMC), welfare loyalty, Bengali asmita, CAA+Matua vote, RG Kar case, school scam
+RAW DATA FACTS — base your analysis ONLY on these:
+1. West Bengal 2026 Assembly Election: 294 seats, majority = 148
+2. Phase 1 (Apr 23, 152 seats): VOTED. Turnout = 92.35% — highest in WB history since Independence
+3. Phase 2 (Apr 29, 142 seats): Yet to vote. Results: May 4, 2026
+4. 2021 WB Assembly result: TMC 215 seats (47.9% vote share), BJP 77 seats (38.1%)
+5. 2024 Lok Sabha result in WB: TMC won 29 of 42 seats, BJP won 12. But BJP led in 164 of 294 assembly segments, TMC led in 126. This is critical — BJP's 2024 LS momentum.
+6. SIR electoral roll: 9 million voters deleted (12% of electorate). ~65% of disputed deletions were Muslim — TMC's core vote bank. This could suppress TMC votes significantly.
+7. Anti-incumbency: TMC has ruled for 15 years. School recruitment scam, RG Kar rape-murder case, law & order issues.
+8. TMC strengths: Welfare schemes (Lakshmir Bhandar cash transfers to women, Swasthya Sathi health insurance), Bengali identity/asmita politics, strong booth management.
+9. BJP strengths: 2024 LS momentum, CAA+Matua community vote in Nadia/North 24 Parganas, Hindu consolidation, PM Modi rallies, Suvendu Adhikari ground organisation.
+10. Historical pattern: In 2021, exit polls underestimated TMC by 50+ seats. But 2024 LS showed BJP gaining ground significantly.
+11. Record 92.35% Phase 1 turnout: In WB history, very high turnout has correlated with anti-incumbency waves (2011 TMC sweep had high turnout against Left). This could mean BJP surge.
+12. Nandigram: Mamata Banerjee is contesting from Nandigram against Suvendu Adhikari — a prestige battle.
 
-Based on ALL information above (especially any new signals from today's headlines), provide:
-1. A direct 3-4 sentence current outlook — who wins, by how much, biggest uncertainty
-2. Up to 5 specific fresh signals/developments extracted from today's news that could shift the prediction (if any)
+IGNORE all paid surveys and polls. Based ONLY on the above raw facts and today's news headlines, give your independent analytical prediction.
 
-Respond ONLY in this JSON format (no markdown, no explanation outside the JSON):
+Respond ONLY in this exact JSON format:
 {
-  "summary": "3-4 sentence analytical paragraph here",
+  "summary": "3-4 sentence independent analytical assessment of who wins and why, based purely on data",
   "signals": [
-    {"headline": "brief signal title", "impact": "TMC|BJP|NEUTRAL", "detail": "one sentence explanation"}
+    {"headline": "signal title", "impact": "TMC|BJP|NEUTRAL", "detail": "one sentence"}
   ],
   "confidence": "LOW|MEDIUM|HIGH",
-  "tmc_range": "e.g. 155-175",
-  "bjp_range": "e.g. 95-115"
+  "tmc_range": "your independent seat range e.g. 150-170",
+  "bjp_range": "your independent seat range e.g. 100-120"
 }`;
 
   try {
