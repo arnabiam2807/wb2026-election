@@ -196,15 +196,13 @@ RAW DATA FACTS — base your analysis ONLY on these:
 
 IGNORE all paid surveys and polls. Based ONLY on the above raw facts and today's news headlines, give your independent analytical prediction.
 
-Respond ONLY in this exact JSON format:
+Respond ONLY with a raw JSON object. No markdown. No backticks. No explanation. Start your response with { and end with }:
 {
-  "summary": "3-4 sentence independent analytical assessment of who wins and why, based purely on data",
-  "signals": [
-    {"headline": "signal title", "impact": "TMC|BJP|NEUTRAL", "detail": "one sentence"}
-  ],
+  "summary": "3-4 sentence independent analytical assessment",
+  "signals": [{"headline": "signal", "impact": "TMC|BJP|NEUTRAL", "detail": "explanation"}],
   "confidence": "LOW|MEDIUM|HIGH",
-  "tmc_range": "your independent seat range e.g. 150-170",
-  "bjp_range": "your independent seat range e.g. 100-120"
+  "tmc_range": "e.g. 150-170",
+  "bjp_range": "e.g. 100-120"
 }`;
 
   try {
@@ -239,23 +237,25 @@ Respond ONLY in this exact JSON format:
     
     let parsed = {};
     try {
-      const clean = text.replace(/```json|```/g,'').trim();
-      // Find JSON object in response
+      // Strip markdown fences and find JSON
+      const clean = text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
       const jsonMatch = clean.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         parsed = JSON.parse(jsonMatch[0]);
       } else {
-        throw new Error('No JSON found in response');
+        throw new Error('No JSON object found');
       }
     } catch(parseErr) {
-      console.error('[AI] JSON parse error:', parseErr.message, 'Raw:', text.substring(0,300));
-      // If JSON fails, use the raw text as summary
+      console.error('[AI] JSON parse error:', parseErr.message);
+      // Extract summary field manually if JSON parse fails
+      const summaryMatch = text.match(/"summary"\s*:\s*"([\s\S]*?)(?<!\\)",/);
+      const cleanText = text.replace(/```json|```/g,'').replace(/[{}"\[\]]/g,'').trim();
       parsed = {
-        summary: text.substring(0, 500) || 'Analysis unavailable.',
+        summary: summaryMatch ? summaryMatch[1] : cleanText.substring(0, 400) || 'Analysis loading...',
         signals: [],
         confidence: 'MEDIUM',
-        tmc_range: '155-175',
-        bjp_range: '95-115'
+        tmc_range: '150-170',
+        bjp_range: '100-120'
       };
     }
     cache.intelligence = {
