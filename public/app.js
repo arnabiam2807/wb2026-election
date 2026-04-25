@@ -43,14 +43,30 @@ function updateMetrics(intelligence) {
   const sub = document.getElementById('m-oth-sub');
   if (sub) sub.textContent = `BGPM·${c.BGPM||0}  INC·${c.INC||0}  LF·${c.LF||0}`;
 
+  // Use AI ranges for bar if available, otherwise use raw counts
+  let tmcVal = c.TMC || 0;
+  let bjpVal = c.BJP || 0;
+  if (intelligence?.tmcRange) {
+    const tmcMid = intelligence.tmcRange.split('-').map(Number);
+    tmcVal = Math.round((tmcMid[0] + tmcMid[1]) / 2);
+  }
+  if (intelligence?.bjpRange) {
+    const bjpMid = intelligence.bjpRange.split('-').map(Number);
+    bjpVal = Math.round((bjpMid[0] + bjpMid[1]) / 2);
+  }
+  const othVal = (c.BGPM||0) + (c.INC||0) + (c.LF||0);
+  const swingVal = intelligence?.tmcRange
+    ? 294 - tmcVal - bjpVal - othVal
+    : (c.SWING || 0);
+
   const total = 294;
   [
-    ['sb-tmc', c.TMC, 'leg-tmc'],
-    ['sb-bjp', c.BJP, 'leg-bjp'],
+    ['sb-tmc', tmcVal, 'leg-tmc'],
+    ['sb-bjp', bjpVal, 'leg-bjp'],
     ['sb-bgpm', c.BGPM, 'leg-bgpm'],
     ['sb-inc', c.INC, 'leg-inc'],
     ['sb-lf', c.LF, 'leg-lf'],
-    ['sb-swing', c.SWING, 'leg-sw'],
+    ['sb-swing', Math.max(0, swingVal), 'leg-sw'],
   ].forEach(([id, val, legId]) => {
     const v = val || 0;
     const el = document.getElementById(id);
