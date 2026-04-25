@@ -145,10 +145,10 @@ async function fetchExitPollData() {
 // AI INTELLIGENCE — Claude analyses all fresh signals together
 // ─────────────────────────────────────────────────────────────────────────────
 async function buildIntelligence() {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     cache.intelligence = {
-      summary: 'Set ANTHROPIC_API_KEY to enable live AI analysis.',
+      summary: 'Set GEMINI_API_KEY to enable live AI analysis.',
       signals: [],
       updatedAt: new Date().toISOString(),
     };
@@ -187,15 +187,14 @@ ESTABLISHED CONTEXT:
 - Key factors: SIR deleted 9M voters (~65% Muslim), anti-incumbency (15 yrs TMC), welfare loyalty, Bengali asmita, CAA+Matua vote, RG Kar case, school scam
 
 Based on ALL information above (especially any new signals from today's headlines), provide:
-1. A direct 3–4 sentence current outlook — who wins, by how much, biggest uncertainty
+1. A direct 3-4 sentence current outlook — who wins, by how much, biggest uncertainty
 2. Up to 5 specific fresh signals/developments extracted from today's news that could shift the prediction (if any)
 
 Respond ONLY in this JSON format (no markdown, no explanation outside the JSON):
 {
   "summary": "3-4 sentence analytical paragraph here",
   "signals": [
-    {"headline": "brief signal title", "impact": "TMC|BJP|NEUTRAL", "detail": "one sentence explanation"},
-    ...
+    {"headline": "brief signal title", "impact": "TMC|BJP|NEUTRAL", "detail": "one sentence explanation"}
   ],
   "confidence": "LOW|MEDIUM|HIGH",
   "tmc_range": "e.g. 155-175",
@@ -203,28 +202,23 @@ Respond ONLY in this JSON format (no markdown, no explanation outside the JSON):
 }`;
 
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const r = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 700,
-        messages: [{ role: 'user', content: prompt }],
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 800, temperature: 0.3 },
       }),
       signal: AbortSignal.timeout(30000),
     });
     if (!r.ok) {
       const errText = await r.text();
-      console.error('[AI] HTTP error:', r.status, errText);
+      console.error('[AI] Gemini HTTP error:', r.status, errText);
       throw new Error(`HTTP ${r.status}: ${errText}`);
     }
     const data = await r.json();
-    const text = data.content?.[0]?.text || '{}';
-    // Strip any accidental markdown fences
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
     const clean = text.replace(/```json|```/g,'').trim();
     const parsed = JSON.parse(clean);
     cache.intelligence = {
@@ -233,12 +227,12 @@ Respond ONLY in this JSON format (no markdown, no explanation outside the JSON):
       confidence: parsed.confidence || 'MEDIUM',
       tmcRange:   parsed.tmc_range  || '155-175',
       bjpRange:   parsed.bjp_range  || '95-115',
-      updatedAt: new Date().toISOString(),
-      stage: status.stage,
+      updatedAt:  new Date().toISOString(),
+      stage:      status.stage,
     };
-    console.log(`[AI] intelligence updated — stage: ${status.stage}`);
+    console.log(`[AI] Gemini intelligence updated — stage: ${status.stage}`);
   } catch(e) {
-    console.error('[AI] error:', e.message, e.stack);
+    console.error('[AI] Gemini error:', e.message);
     cache.intelligence = {
       summary: `AI error: ${e.message}`,
       signals: [],
