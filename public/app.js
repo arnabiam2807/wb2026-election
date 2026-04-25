@@ -97,7 +97,7 @@ function renderIntelligence(data) {
   const updEl  = document.getElementById('aiUpdated');
   const signalsEl = document.getElementById('aiSignals');
 
-  if (textEl && data.summary) textEl.textContent = data.summary;
+  if (textEl) textEl.textContent = data.summary || 'Loading analysis...';
 
   if (signalsEl) {
     if (data.signals && data.signals.length > 0) {
@@ -318,7 +318,7 @@ async function fullRefresh() {
       fetch(`${API}/api/status`).then(r => r.json()),
     ]);
 
-    if (intel.status === 'fulfilled' && intel.value?.summary) {
+    if (intel.status === 'fulfilled' && intel.value) {
       renderIntelligence(intel.value);
     } else {
       const aiEl = document.getElementById('aiText');
@@ -346,7 +346,7 @@ async function softRefresh() {
       fetch(`${API}/api/news`).then(r => r.json()),
       fetch(`${API}/api/status`).then(r => r.json()),
     ]);
-    if (intel.status==='fulfilled' && intel.value?.summary) renderIntelligence(intel.value);
+    if (intel.status==='fulfilled' && intel.value) renderIntelligence(intel.value);
     if (news.status==='fulfilled') renderNews(news.value);
     if (status.status==='fulfilled') updateStageBanner(status.value);
   } catch(e) { /* silent */ }
