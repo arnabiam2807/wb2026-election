@@ -1196,329 +1196,306 @@ footer {
 
 <script>
 // West Bengal 2026 Assembly Election — All 294 constituencies
-// Candidates: Official ECI data via voterlist.co.in (TMC list 17 Mar 2026, BJP list Mar-Apr 2026)
-// Predictions: Independent multi-factor model (2021 result, 2024 LS segment, demographics, SIR, candidate, local factors)
-// NO paid surveys used.
+// SOURCE: WB_Election_2026_Candidates.xlsx (user-provided, Apr 2026)
+// Official candidates from: AITC list, BJP lists 1-3, Left Front list (Parts I-IV), AICC list
+// Format: [no, name, district, winner, tmc, bjp, conf, phase, cat, inc, lf]
+// winner: TMC|BJP|BGPM|INC|SWING  — independent analysis, no paid surveys
 
 const SEATS = [
-// ── PHASE 1 (Apr 23) — Seats 1-76 ──────────────────────────────────────────
-// COOCH BEHAR
-[1,"Mekliganj","Cooch Behar","TMC","Paresh Chandra Adhikary","Dadhiram Roy",62,1,"SC","—","—"]
-[2,"Mathabhanga","Cooch Behar","BJP","Sablu Barman","Nisith Pramanik",75,1,"SC","—","—"]
-[3,"Cooch Behar Uttar","Cooch Behar","BJP","Partha Pratim Roy","Sukumar Roy",71,1,"SC","—","—"]
-[4,"Cooch Behar Dakshin","Cooch Behar","SWING","Avijit De Bhowmick","—",49,1,"","—","—"]
-[5,"Sitalkuchi","Cooch Behar","TMC","Harihar Das","Savitri Barman",62,1,"SC","—","—"]
-[6,"Sitai","Cooch Behar","TMC","Sangita Roy Basunia","Ashutosh Barma",65,1,"SC","—","—"]
-[7,"Dinhata","Cooch Behar","SWING","Udayan Guha","Ajay Roy",50,1,"","—","—"]
-[8,"Natabari","Cooch Behar","BJP","Sailen Barma","Girija Shankar Roy",70,1,"","—","—"]
-[9,"Tufanganj","Cooch Behar","BJP","Shib Sankar Paul","Malati Rava Roy",67,1,"","—","—"]
-// ALIPURDUAR
-[10,"Kumargram","Alipurduar","BJP","Rajeev Tirkey","Manoj Kumar Oraon",72,1,"ST","—","—"]
-[11,"Kalchini","Alipurduar","BJP","Birendra Bara","Bishal Lama",76,1,"ST","—","—"]
-[12,"Alipurduars","Alipurduar","BJP","Suman Kanjilal","Paritosh Das",60,1,"","—","—"]
-[13,"Falakata","Alipurduar","BJP","Subhash Chandra Roy","Deepak Barman",64,1,"SC","—","—"]
-[14,"Madarihat","Alipurduar","TMC","Jayprakash Toppo","Lakshman Limbu",56,1,"ST","—","—"]
-// JALPAIGURI
-[15,"Dhupguri","Jalpaiguri","BJP","Dr. Nirmal Chandra Roy","Naresh Chandra Roy",60,1,"SC","—","—"]
-[16,"Maynaguri","Jalpaiguri","BJP","Ram Mohan Roy","Dalim Roy",61,1,"SC","—","—"]
-[17,"Jalpaiguri","Jalpaiguri","TMC","Krishna Das","Ananta Deb Adhikary",62,1,"SC","—","—"]
-[18,"Rajganj","Jalpaiguri","TMC","Swapna Barman","—",62,1,"SC","—","—"]
-[19,"Dabgram-Phulbari","Jalpaiguri","BJP","Ranjan Shil Sharma","Sikha Chatterjee",61,1,"","—","—"]
-[20,"Mal","Jalpaiguri","TMC","Bulu Chik Baraik","Sukra Munda",59,1,"ST","—","—"]
-[21,"Nagrakata","Jalpaiguri","BJP","Sanjay Kujur","Puna Bhengra",64,1,"ST","—","—"]
-// KALIMPONG + DARJEELING
-[22,"Kalimpong","Kalimpong","BGPM","—","Bharat Chetri",73,1,"","—","—"]
-[23,"Darjeeling","Darjeeling","BGPM","—","Noman Rai",74,1,"","—","—"]
-[24,"Kurseong","Darjeeling","BGPM","—","Sonam Lama",70,1,"","—","—"]
-[25,"Matigara-Naxalbari","Darjeeling","BJP","Sankar Malakar","Anandamay Barman",64,1,"SC","—","—"]
-[26,"Siliguri","Darjeeling","SWING","Goutam Deb","Dr. Shankar Ghosh",47,1,"","Probal Kumar Sinha","Ashok Bhattacharya"]
-[27,"Phansidewa","Darjeeling","BJP","Reena Toppo Ekka","Durga Murmu",63,1,"ST","—","—"]
-// UTTAR DINAJPUR
-[28,"Chopra","Uttar Dinajpur","TMC","Hamidul Rahaman","Shankar Adhikari",68,1,"","—","—"]
-[29,"Islampur","Uttar Dinajpur","TMC","Kanaia Lal Aggarwal","—",67,1,"","—","—"]
-[30,"Goalpokhar","Uttar Dinajpur","TMC","Md. Ghulam Rabbani","Sarjit Biswas",70,1,"","—","—"]
-[31,"Chakulia","Uttar Dinajpur","SWING","Minhajul Arfin Azad","Manoj Jain",46,1,"","—","—"]
-[32,"Karandighi","Uttar Dinajpur","TMC","Gautam Paul","Adv. Biraj Biswas",65,1,"","—","—"]
-[33,"Hemtabad","Uttar Dinajpur","TMC","Satyajit Barman","—",67,1,"SC","—","—"]
-[34,"Kaliaganj","Uttar Dinajpur","SWING","Nitai Baishya","Utpal Maharaj",46,1,"SC","—","—"]
-[35,"Raiganj","Uttar Dinajpur","TMC","Krishna Kalyani","Kaushik Chowdhury",63,1,"","Moazzem Hossain","Md. Salim"]
-[36,"Itahar","Uttar Dinajpur","TMC","Mosaraf Hussain","Sabita Barman",68,1,"","—","—"]
-// DAKSHIN DINAJPUR
-[37,"Kushmandi","Dakshin Dinajpur","TMC","Rekha Roy","Tapas Chandra Roy",64,1,"SC","—","—"]
-[38,"Kumarganj","Dakshin Dinajpur","TMC","Toraf Hossain Mondal","Suvendu Sarkar",67,1,"","—","—"]
-[39,"Balurghat","Dakshin Dinajpur","BJP","Arpita Ghosh","Bidyut Roy",62,1,"","Gopal Lama","—"]
-[40,"Tapan","Dakshin Dinajpur","BJP","Chintamoni Biha","Budhrai Tudu",63,1,"ST","—","—"]
-[41,"Gangarampur","Dakshin Dinajpur","BJP","Goutam Das","Satyendra Nath Rai",62,1,"SC","—","—"]
-[42,"Harirampur","Dakshin Dinajpur","TMC","Biplab Mitra","Debabrata Majumder",65,1,"","—","—"]
-// MALDA
-[43,"Habibpur","Malda","BJP","Amal Kisku","Joyel Murmu",63,1,"ST","—","—"]
-[44,"Gazole","Malda","BJP","Prosenjit Das","Chinmoy Deb Barman",61,1,"SC","Barun Prasad Das","—"]
-[45,"Chanchal","Malda","TMC","Prasun Banerjee","Ratan Das",72,1,"","—","—"]
-[46,"Harischandrapur","Malda","TMC","Md. Matebur Rahman","Ratan Das",70,1,"","—","—"]
-[47,"Malatipur","Malda","SWING","Abdur Rahim Boxi","Ashish Das",46,1,"","—","—"]
-[48,"Ratua","Malda","TMC","Samar Mukherjee","Abhishek Singhania",68,1,"","—","—"]
-[49,"Manikchak","Malda","TMC","Kabita Mandal","Gaur Chandra Mandal",67,1,"","—","—"]
-[50,"Maldaha","Malda","BJP","Lipika Barman Ghosh","Gopal Chandra Saha",60,1,"SC","Priya Ranjan Das","—"]
-[51,"English Bazar","Malda","TMC","Asis Kundu","—",65,1,"","—","—"]
-[52,"Mothabari","Malda","TMC","Md. Najrul Islam","Nibaran Ghosh",74,1,"","—","—"]
-[53,"Sujapur","Malda","TMC","Sabina Yeasmin","Abhiraj Chaudhary",78,1,"","—","—"]
-[54,"Baisnabnagar","Malda","TMC","Chandana Sarkar","Raju Karmakar",67,1,"","—","—"]
-// MURSHIDABAD
-[55,"Farakka","Murshidabad","TMC","Amirul Islam","Sunil Chowdhury",70,1,"","—","—"]
-[56,"Samserganj","Murshidabad","TMC","Nur Alam","Shashthi Charan Ghosh",74,1,"","—","—"]
-[57,"Suti","Murshidabad","TMC","Emani Biswas","Mahabir Ghosh",68,1,"","—","—"]
-[58,"Jangipur","Murshidabad","TMC","Jakir Hossain","—",72,1,"","—","—"]
-[59,"Raghunathganj","Murshidabad","TMC","Janab Akhruzzaman","Surjit Poddar",70,1,"","—","—"]
-[60,"Sagardighi","Murshidabad","TMC","Bayron Biswas","—",63,1,"","—","—"]
-[61,"Lalgola","Murshidabad","TMC","Dr. Abdul Aziz","Amar Kumar Das",75,1,"","—","—"]
-[62,"Bhagabangola","Murshidabad","TMC","Reyaz Hussain Sarkar","Bhaskar Sarkar",65,1,"","—","—"]
-[63,"Raninagar","Murshidabad","SWING","Soumik Hussain","—",43,1,"","—","—"]
-[64,"Murshidabad","Murshidabad","BJP","Shaoni Singha Roy","Gouri Sankar Ghosh",59,1,"","Ashok Dasgupta","Abdul Mannan (AIFB)"]
-[65,"Nabagram","Murshidabad","TMC","Pranab Chandra Das","—",66,1,"SC","—","—"]
-[66,"Khargram","Murshidabad","TMC","Ashish Marjit","—",65,1,"SC","—","Dhrubajyoti Saha (CPI-M)"]
-[67,"Burwan","Murshidabad","TMC","Pratima Rajak","—",66,1,"SC","—","Ananda Das (RSP)"]
-[68,"Kandi","Murshidabad","TMC","Apurba Sarkar","—",64,1,"","—","Dr. Rejaul Karim (CPI)"]
-[69,"Bharatpur","Murshidabad","SWING","Mustafizur Rahaman","—",44,1,"","—","—"]
-[70,"Rejinagar","Murshidabad","SWING","Ataur Rahman","Bapan Ghosh",42,1,"","—","—"]
-[71,"Beldanga","Murshidabad","TMC","Rabiul Alam Chowdhury","Bharat Kumar Jhawar",69,1,"","—","—"]
-[72,"Baharampur","Murshidabad","INC","Naru Gopal Mukherjee","Subrata Maitra",65,1,"","Naru Gopal Mukherjee","Ashok Pal (CPI-M)"]
-[73,"Hariharpara","Murshidabad","TMC","Niamot Sheikh","Tanmoy Biswas",71,1,"","—","—"]
-[74,"Naoda","Murshidabad","SWING","Shahina Mumtaz","Rana Mandal",43,1,"","—","Habibur Rahaman (RSP)"]
-[75,"Domkal","Murshidabad","SWING","Humayun Kabir","Nanda Dulal Pal",43,1,"","—","Mostafijur Rahaman (CPI-M)"]
-[76,"Jalangi","Murshidabad","TMC","Babar Ali","Naba Kumar Sarkar",73,1,"","—","—"]
-
-// ── PHASE 2 (Apr 29) — Seats 77-294 ────────────────────────────────────────
-// NADIA
-[77,"Karimpur","Nadia","TMC","Soham Chakraborty","Samarendranath Ghosh",66,2,"","—","Pravas Majumder (CPI-M)"]
-[78,"Tehatta","Nadia","TMC","Dilip Poddar","—",66,2,"","—","Subodh Biswas (CPI-M)"]
-[79,"Palashipara","Nadia","TMC","Rukbanur Rahman","Anima Dutta",67,2,"","—","—"]
-[80,"Kaliganj","Nadia","TMC","Alifa Ahmed","Bapan Ghosh",65,2,"","—","Sabina Yasmin (CPI-M)"]
-[81,"Nakashipara","Nadia","TMC","Kallol Kha","—",65,2,"","—","—"]
-[82,"Chapra","Nadia","TMC","Jeber Sekh","—",66,2,"","—","—"]
-[83,"Krishnanagar Uttar","Nadia","TMC","Avinabha Bhattacharya","—",67,2,"","—","—"]
-[84,"Nabadwip","Nadia","TMC","Pundarikakshya Saha","—",65,2,"","—","—"]
-[85,"Krishnanagar Dakshin","Nadia","TMC","Ujjwal Biswas","—",65,2,"","Uday Bhan Singh","Sujan Chakraborty (CPI-M)"]
-[86,"Santipur","Nadia","TMC","Braja Kishore Goswami","—",64,2,"","Ajay De","Priyobrata Ghosh (CPI-M)"]
-[87,"Ranaghat Uttar Paschim","Nadia","BJP","Tapas Ghosh","Parthasarathi Chatterjee",65,2,"","—","—"]
-[88,"Krishnaganj","Nadia","BJP","Samir Kumar Poddar","Ashim Biswas",70,2,"SC","—","—"]
-[89,"Ranaghat Uttar Purba","Nadia","BJP","Barnali Dey Roy","Ashim Biswas",67,2,"SC","—","—"]
-[90,"Ranaghat Dakshin","Nadia","SWING","Dr. Sougata Kumar Barman","—",50,2,"SC","—","—"]
-[91,"Chakdaha","Nadia","BJP","Subhankar Singha","Bankim Chandra Ghosh",61,2,"","—","—"]
-[92,"Kalyani","Nadia","TMC","Dr. Atindra Nath Mondal","—",65,2,"SC","—","—"]
-[93,"Haringhata","Nadia","BJP","Dr. Rajib Biswas","Asim Kumar Sarkar",66,2,"SC","—","—"]
-// NORTH 24 PARGANAS
-[94,"Bagda","North 24 Parganas","SWING","Madhupurna Thakur","Soma Thakur",50,2,"SC","—","—"]
-[95,"Bangaon Uttar","North 24 Parganas","BJP","Biswajit Das","—",70,2,"SC","—","—"]
-[96,"Bangaon Dakshin","North 24 Parganas","BJP","Rituparna Addhya","—",68,2,"SC","—","—"]
-[97,"Gaighata","North 24 Parganas","BJP","Narottam Biswas","—",65,2,"SC","—","—"]
-[98,"Swarupnagar","North 24 Parganas","TMC","Bina Mondal","—",65,2,"SC","—","—"]
-[99,"Baduria","North 24 Parganas","TMC","Burhanul Mokkadin","Sukriti Sarkar",70,2,"","—","—"]
-[100,"Habra","North 24 Parganas","TMC","Jyotipriya Mallick","—",67,2,"","—","—"]
-[101,"Ashoknagar","North 24 Parganas","TMC","Narayan Goswami","—",66,2,"","—","—"]
-[102,"Amdanga","North 24 Parganas","TMC","Peerzada Kasem Siddiqui","Arindam Dey",70,2,"","—","—"]
-[103,"Bijpur","North 24 Parganas","TMC","Subodh Adhikary","—",67,2,"","—","—"]
-[104,"Naihati","North 24 Parganas","TMC","Sanat Dey","Sumitro Chaterjee",66,2,"","—","—"]
-[105,"Bhatpara","North 24 Parganas","SWING","Amit Gupta","Pawan Kumar Singh",46,2,"","Manoj Ghosh","Tapas Pal (CPI-M)"]
-[106,"Jagatdal","North 24 Parganas","TMC","Somenath Shyam Ichini","—",64,2,"","—","—"]
-[107,"Noapara","North 24 Parganas","TMC","Trinankur Bhattacharya","—",63,2,"","—","—"]
-[108,"Barrackpore","North 24 Parganas","TMC","Raju Chakrabarty (Raj)","—",62,2,"","Samir Chakraborty","—"]
-[109,"Khardaha","North 24 Parganas","TMC","Devdeep Purohit","—",66,2,"","—","—"]
-[110,"Dum Dum Uttar","North 24 Parganas","TMC","Chandrima Bhattacharya","—",73,2,"","—","—"]
-[111,"Panihati","North 24 Parganas","SWING","Tirthankar Ghosh","—",48,2,"","Siddhartha Roy","—"]
-[112,"Kamarhati","North 24 Parganas","TMC","Madan Mitra","—",66,2,"","—","—"]
-[113,"Baranagar","North 24 Parganas","TMC","Sayantika Banerjee","Sajal Ghosh",67,2,"","—","—"]
-[114,"Dum Dum","North 24 Parganas","TMC","Bratya Basu","—",69,2,"","—","—"]
-[115,"Rajarhat Newtown","North 24 Parganas","TMC","Tapash Chatterjee","—",68,2,"","—","—"]
-[116,"Bidhannagar","North 24 Parganas","TMC","Sujit Bose","—",69,2,"","—","—"]
-[117,"Rajarhat Gopalpur","North 24 Parganas","TMC","Aditi Munshi","—",67,2,"","—","—"]
-[118,"Madhyamgram","North 24 Parganas","TMC","Rathin Ghosh","—",70,2,"","—","—"]
-[119,"Barasat","North 24 Parganas","TMC","Sabyasachi Dutta","—",66,2,"","—","—"]
-[120,"Deganga","North 24 Parganas","TMC","Anisur Rahaman (Bidesh)","Tarun Kanti Ghosh",70,2,"","—","—"]
-[121,"Haroa","North 24 Parganas","TMC","Md. Mufti Abdul Matin","—",70,2,"","—","—"]
-[122,"Minakhan","North 24 Parganas","TMC","Usha Rani Mondal","—",66,2,"SC","—","—"]
-[123,"Sandeshkhali","North 24 Parganas","TMC","Jharna Sardar","—",60,2,"ST","—","—"]
-[124,"Basirhat Dakshin","North 24 Parganas","TMC","Surajit Mitra","—",66,2,"","—","—"]
-[125,"Basirhat Uttar","North 24 Parganas","TMC","Md Tauseef Rehman","Narayan Chandra Mondal",68,2,"","—","—"]
-[126,"Hingalganj","North 24 Parganas","TMC","Ananda Sarkar","—",67,2,"SC","—","—"]
-// SOUTH 24 PARGANAS
-[127,"Gosaba","South 24 Parganas","TMC","Subrata Mondal","—",70,2,"SC","—","—"]
-[128,"Basanti","South 24 Parganas","TMC","Nilima Bishal Mistry","Bikash Sardar",68,2,"SC","—","—"]
-[129,"Kultali","South 24 Parganas","TMC","Ganesh Chandra Mondal","Madhabi Mahalder",68,2,"SC","—","—"]
-[130,"Patharpratima","South 24 Parganas","TMC","Samir Kumar Jana","Asit Kumar Haldar",70,2,"","—","—"]
-[131,"Kakdwip","South 24 Parganas","TMC","Manturam Pakhira","Deepankar Jana",69,2,"","—","—"]
-[132,"Sagar","South 24 Parganas","TMC","Bankim Chandra Hazra","—",69,2,"","—","—"]
-[133,"Kulpi","South 24 Parganas","TMC","Barnali Dhara","—",67,2,"","—","—"]
-[134,"Raidighi","South 24 Parganas","TMC","Tapas Mondal","Palash Rana",67,2,"","—","—"]
-[135,"Mandirbazar","South 24 Parganas","TMC","Joydeb Halder","—",67,2,"SC","—","—"]
-[136,"Jaynagar","South 24 Parganas","TMC","Biswanath Das","—",69,2,"SC","—","—"]
-[137,"Baruipur Purba","South 24 Parganas","TMC","Bivas Sardar","—",67,2,"SC","—","—"]
-[138,"Canning Paschim","South 24 Parganas","TMC","Paresh Ram Das","—",68,2,"SC","—","—"]
-[139,"Canning Purba","South 24 Parganas","TMC","Md. Baharul Islam","Ashim Sapui",68,2,"","—","—"]
-[140,"Baruipur Paschim","South 24 Parganas","TMC","Biman Banerjee","—",66,2,"","—","—"]
-[141,"Magrahat Purba","South 24 Parganas","TMC","Sharmistha Purkait","Uttam Kumar Banik",67,2,"SC","—","—"]
-[142,"Magrahat Paschim","South 24 Parganas","TMC","Shamim Ahmed","—",67,2,"","—","—"]
-[143,"Diamond Harbour","South 24 Parganas","TMC","Pannalal Halder","Dipak Kumar Halder",69,2,"","—","—"]
-[144,"Falta","South 24 Parganas","TMC","Jahangir Khan","Debangshu Panda",67,2,"","—","—"]
-[145,"Satgachia","South 24 Parganas","TMC","Somashree Betal","—",67,2,"","—","—"]
-[146,"Bishnupur","South 24 Parganas","TMC","Dilip Mondal","Viswajit Khan",67,2,"SC","—","—"]
-[147,"Sonarpur Dakshin","South 24 Parganas","SWING","Arundhuti Maitra","—",49,2,"","—","—"]
-[148,"Bhangar","South 24 Parganas","TMC","Saokat Molla","—",65,2,"","—","—"]
-[149,"Kasba","South 24 Parganas","TMC","Javed Ahmed Khan","—",67,2,"","—","—"]
-[150,"Jadavpur","South 24 Parganas","TMC","Debabrata Majumdar","—",65,2,"","Manoranjan Das","Srijib Biswas (CPI-M)"]
-[151,"Sonarpur Uttar","South 24 Parganas","TMC","Firdousi Begum","Debashish Dhar",66,2,"","—","—"]
-[152,"Tollygunge","Kolkata","TMC","Aroop Biswas","—",67,2,"","—","—"]
-[153,"Behala Purba","Kolkata","TMC","Subhasish Chakraborty","—",66,2,"","—","—"]
-[154,"Behala Paschim","Kolkata","TMC","Ratna Chatterjee","—",66,2,"","—","—"]
-[155,"Maheshtala","South 24 Parganas","TMC","Subhasis Das","—",67,2,"","—","—"]
-[156,"Budge Budge","South 24 Parganas","TMC","Ashok Kumar Deb","Dr. Tarun Kumar Adak",67,2,"","—","—"]
-[157,"Metiaburuz","Kolkata","TMC","Abdul Khaleque Molla","Veer Bahadur Singh",72,2,"","—","—"]
-// KOLKATA
-[158,"Kolkata Port","Kolkata","TMC","Firhad Hakim","—",70,2,"","—","—"]
-[159,"Bhabanipur","Kolkata","TMC","Mamata Banerjee","Suvendu Adhikari",71,2,"","—","—"]
-[160,"Rashbehari","Kolkata","TMC","Debashis Kumar","Swapan Das Gupta",65,2,"","Sanjay Chattopadhyay","Bikash Ranjan Bhattacharya (CPI-M)"]
-[161,"Ballygunge","Kolkata","TMC","Sovandeb Chattopadhyay","—",67,2,"","Subhankar Roy","Sujan Chakraborty (CPI-M)"]
-[162,"Chowrangee","Kolkata","TMC","Nayna Bandopadhyay","Santosh Pathak",65,2,"","—","—"]
-[163,"Entally","Kolkata","TMC","Sandipan Saha","—",65,2,"","—","—"]
-[164,"Beleghata","Kolkata","TMC","Kunal Ghosh","—",66,2,"","—","—"]
-[165,"Jorasanko","Kolkata","TMC","Vijay Upadhyay","—",65,2,"","—","—"]
-[166,"Shyampukur","Kolkata","TMC","Dr. Shashi Panja","—",67,2,"","—","—"]
-[167,"Maniktala","Kolkata","TMC","Shreya Pandey","—",66,2,"","—","—"]
-[168,"Kashipur Belgachhia","Kolkata","TMC","Atin Ghosh","—",66,2,"","—","—"]
-// HOWRAH
-[169,"Bally","Howrah","TMC","Kailash Mishra","—",63,2,"","—","—"]
-[170,"Howrah Uttar","Howrah","TMC","Goutam Chowdhury","Umesh Rai",64,2,"","—","—"]
-[171,"Howrah Madhya","Howrah","TMC","Arup Roy","—",65,2,"","—","—"]
-[172,"Shibpur","Howrah","TMC","Dr. Rana Chatterjee","Rudranil Ghosh",63,2,"","—","—"]
-[173,"Howrah Dakshin","Howrah","TMC","Nandita Choudhary","Shyamal Hati",62,2,"","—","—"]
-[174,"Sankrail","Howrah","TMC","Priya Paul","—",66,2,"SC","—","—"]
-[175,"Panchla","Howrah","TMC","Gulshan Mullick","Ranjan Kumar Paul",65,2,"","—","—"]
-[176,"Uluberia Purba","Howrah","TMC","Ritabrata Banerjee","—",67,2,"","—","—"]
-[177,"Uluberia Uttar","Howrah","TMC","Bimal Kumar Das","—",67,2,"SC","—","—"]
-[178,"Uluberia Dakshin","Howrah","TMC","Pulak Roy","Swami Mangalanand Puri",65,2,"","—","—"]
-[179,"Shyampur","Howrah","TMC","Nadebasi Jana","—",66,2,"","—","—"]
-[180,"Bagnan","Howrah","TMC","Arunava Sen","—",66,2,"","—","—"]
-[181,"Amta","Howrah","TMC","Sukanta Paul","Amit Samanta",64,2,"SC","—","—"]
-[182,"Udaynarayanpur","Howrah","TMC","Samir Kumar Panja","—",64,2,"","—","—"]
-[183,"Jagatballavpur","Howrah","TMC","Subir Chatterjee","—",65,2,"","—","—"]
-[184,"Domjur","Howrah","TMC","Tapas Maity","Gobinda Hazra",65,2,"","—","—"]
-// HOOGHLY
-[185,"Uttarpara","Hooghly","BJP","Sirsanya Bandopadhyay","—",58,2,"","—","Tapas Sinha (CPI-M)"]
-[186,"Sreerampur","Hooghly","TMC","Tanmoy Ghosh","—",55,2,"","Dilip Banerjee","Debabrata Bandyopadhyay (CPI-M)"]
-[187,"Champdani","Hooghly","TMC","Arindam Guin","—",63,2,"","—","—"]
-[188,"Singur","Hooghly","TMC","Becharam Manna","—",63,2,"","Rabindra Nath Bhattacharya","Ratan Halder (CPI-M)"]
-[189,"Chandannagar","Hooghly","TMC","Indranil Sen","—",65,2,"","—","—"]
-[190,"Chunchura","Hooghly","TMC","Debangshu Bhattacharya","—",63,2,"","—","—"]
-[191,"Balagarh","Hooghly","TMC","Ranjan Dhara","—",64,2,"SC","—","—"]
-[192,"Pandua","Hooghly","TMC","Samir Chakraborty (Bua)","—",64,2,"","—","—"]
-[193,"Saptagram","Hooghly","TMC","Bidesh Bose","Swaraj Ghosh",63,2,"","—","—"]
-[194,"Chanditala","Hooghly","TMC","Swati Khandoker","—",64,2,"","—","—"]
-[195,"Jangipara","Hooghly","TMC","Snehasis Chakraborty","—",64,2,"SC","—","—"]
-[196,"Haripal","Hooghly","TMC","Dr. Karabi Manna","—",64,2,"SC","—","—"]
-[197,"Dhanekhali","Hooghly","TMC","Asima Patra","—",64,2,"SC","—","—"]
-[198,"Tarakeswar","Hooghly","TMC","Ramendu Singha Roy","Santu Pan",64,2,"","—","—"]
-[199,"Pursurah","Hooghly","TMC","Partha Hazari","Biman Ghosh",63,2,"SC","—","—"]
-[200,"Arambag","Hooghly","TMC","Mita Bag","Hemanta Bag",63,2,"SC","—","Subhash Naskar (CPI-M)"]
-[201,"Goghat","Hooghly","TMC","Dr. Nirmal Maji","Prashanta Dighar",62,2,"SC","—","—"]
-[202,"Khanakul","Hooghly","TMC","Palash Roy","Susanta Ghosh",64,2,"","—","—"]
-// PURBA MEDINIPUR
-[203,"Tamluk","Purba Medinipur","TMC","Dipendra Narayan Roy","—",65,2,"","—","—"]
-[204,"Panskura Purba","Purba Medinipur","TMC","Asim Kumar Maji","Subrata Maity",64,2,"SC","—","—"]
-[205,"Panskura Paschim","Purba Medinipur","TMC","Siraj Khan","Sintu Senapati",64,2,"SC","—","—"]
-[206,"Moyna","Purba Medinipur","TMC","Chandan Mondal","Ashok Dinda",63,2,"","—","—"]
-[207,"Nandakumar","Purba Medinipur","TMC","Sukumar Dey","—",64,2,"","—","—"]
-[208,"Mahisadal","Purba Medinipur","TMC","Tilak Kumar Chakraborty","Subhash Panja",64,2,"","—","—"]
-[209,"Haldia","Purba Medinipur","TMC","Tapasi Mandal","Pradip Kumar Bijoli",62,2,"SC","—","—"]
-[210,"Nandigram","Purba Medinipur","BJP","Pabitra Kar","Suvendu Adhikari",55,2,"","Dipak Mondal","Minakshi Mukherjee (CPI-M)"]
-[211,"Chandipur","Purba Medinipur","TMC","Uttam Barik","Dr. Piyush Shanti Das",63,2,"","—","—"]
-[212,"Patashpur","Purba Medinipur","TMC","Pijus Kanti Panda","Tapan Maity",64,2,"SC","—","—"]
-[213,"Kanthi Uttar","Purba Medinipur","TMC","Debasis Bhunia","Sumita Sinha",64,2,"","—","—"]
-[214,"Bhagabanpur","Purba Medinipur","TMC","Manab Kumar Porua","—",64,2,"","—","—"]
-[215,"Khejuri","Purba Medinipur","TMC","Rabin Chandra Mandal","—",64,2,"SC","—","—"]
-[216,"Kanthi Dakshin","Purba Medinipur","BJP","Tarun Kr Jana","Arup Kumar Das",61,2,"","—","—"]
-[217,"Ramnagar","Purba Medinipur","TMC","Akhil Giri","Chandra Sekhar Mondal",63,2,"","—","—"]
-[218,"Egra","Purba Medinipur","TMC","Tarun Maity","—",65,2,"","—","—"]
-// PASCHIM MEDINIPUR + JHARGRAM
-[219,"Dantan","Paschim Medinipur","TMC","Manik Maity","Ajit Kumar Jana",62,2,"","—","—"]
-[220,"Nayagram","Jhargram","TMC","Dulal Murmu","Amiya Kisku",63,2,"ST","—","—"]
-[221,"Gopiballavpur","Jhargram","TMC","Ajit Mahata","Rajesh Mahto",63,2,"","—","—"]
-[222,"Jhargram","Jhargram","BJP","Mangal Soren","Lakshmikant Sahu",60,2,"ST","—","—"]
-[223,"Keshiary","Paschim Medinipur","TMC","Ramjiban Mandi","Bhadra Hembrem",62,2,"ST","—","—"]
-[224,"Kharagpur Sadar","Paschim Medinipur","BJP","Pradip Sarkar","Dilip Ghosh",62,2,"","—","—"]
-[225,"Narayangarh","Paschim Medinipur","TMC","Pratibha Rani Maity","Rama Prasad Giri",62,2,"","—","—"]
-[226,"Sabang","Paschim Medinipur","TMC","Manas Ranjan Bhunia","Amal Panda",64,2,"","—","—"]
-[227,"Pingla","Paschim Medinipur","TMC","Ajit Maity","—",64,2,"","—","—"]
-[228,"Kharagpur","Paschim Medinipur","BJP","Dinen Roy","Tapan Bhuya",61,2,"","—","—"]
-[229,"Debra","Paschim Medinipur","TMC","Rajib Banerjee","Shubhashish Om",63,2,"","—","—"]
-[230,"Daspur","Paschim Medinipur","TMC","Asis Huda","Tapan Dutta",64,2,"","—","—"]
-[231,"Ghatal","Paschim Medinipur","TMC","Shyamali Sardar","Sital Kapat",63,2,"SC","—","—"]
-[232,"Chandrakona","Paschim Medinipur","TMC","Surjya Kanta Doloi","Sukanta Dolui",63,2,"SC","—","—"]
-[233,"Garbeta","Paschim Medinipur","BJP","Uttara Singha (Hazra)","Pradeep Lodha",59,2,"SC","—","Srikumar Mukherjee (CPI-M)"]
-[234,"Salboni","Paschim Medinipur","TMC","Srikanta Mahata","Biman Mahto",64,2,"ST","—","—"]
-[235,"Keshpur","Paschim Medinipur","TMC","Seuli Saha","Suvendu Samanta",62,2,"SC","—","—"]
-[236,"Medinipur","Paschim Medinipur","TMC","Sujoy Hazra","—",63,2,"","—","—"]
-[237,"Binpur","Jhargram","TMC","Birbaha Hansda","Dr. Pranat Tudu",63,2,"ST","—","—"]
-// PURULIA
-[238,"Bandwan","Purulia","TMC","Rajib Lochan Saren","Labsen Baske",62,2,"ST","—","—"]
-[239,"Balarampur","Purulia","TMC","Shantiram Mahato","Jaladhar Mahto",61,2,"","—","—"]
-[240,"Baghmundi","Purulia","TMC","Sushanta Mahato","—",63,2,"ST","—","—"]
-[241,"Joypur","Purulia","TMC","Arjun Mahato","—",59,2,"","—","—"]
-[242,"Purulia","Purulia","TMC","Sujoy Banerjee","—",57,2,"","Gopal Banerjee","Manoranjan Saren (CPI-M)"]
-[243,"Manbazar","Purulia","TMC","—","Moyna Murmu",62,2,"ST","—","—"]
-[244,"Kashipur","Purulia","BJP","—","Kamalkanta Hansda",58,2,"","—","—"]
-[245,"Para","Purulia","BJP","—","Nadiar Chand Bauri",57,2,"SC","—","—"]
-[246,"Raghunathpur","Purulia","BJP","—","Mamoni Bauri",59,2,"SC","—","—"]
-// BANKURA
-[247,"Saltora","Bankura","BJP","—","Chandana Bauri",60,2,"SC","—","—"]
-[248,"Chhatna","Bankura","SWING","—","Satyanarayan Mukhopadhyay",50,2,"SC","—","—"]
-[249,"Ranibandh","Bankura","TMC","—","Kshudiram Tudu",64,2,"ST","—","—"]
-[250,"Raipur","Bankura","TMC","—","Kshetra Mohan Hansda",64,2,"ST","—","—"]
-[251,"Taldangra","Bankura","SWING","—","Souvik Patra",50,2,"","—","—"]
-[252,"Bankura","Bankura","BJP","—","—",58,2,"","—","—"]
-[253,"Barjora","Bankura","TMC","—","Billeshwar Singha",62,2,"SC","—","—"]
-[254,"Onda","Bankura","BJP","—","Amarnath Shakha",57,2,"SC","—","—"]
-[255,"Bishnupur","Bankura","BJP","—","—",60,2,"","—","—"]
-[256,"Katulpur","Bankura","TMC","—","Laxmikanta Majumdar",64,2,"SC","—","—"]
-[257,"Indus","Bankura","TMC","—","Nirmal Kumar Dhara",63,2,"SC","—","—"]
-[258,"Sonamukhi","Bankura","TMC","—","Dibakar Gharami",62,2,"SC","—","—"]
-// PURBA BARDHAMAN
-[259,"Khandaghosh","Purba Bardhaman","TMC","—","—",64,2,"SC","—","—"]
-[260,"Bardhaman Dakshin","Purba Bardhaman","TMC","—","—",65,2,"","—","—"]
-[261,"Raina","Purba Bardhaman","TMC","—","Subhash Patra",66,2,"SC","—","—"]
-[262,"Jamalpur","Purba Bardhaman","TMC","—","Arun Halder",65,2,"SC","—","—"]
-[263,"Monteswar","Purba Bardhaman","TMC","—","Saikat Panja",66,2,"","—","—"]
-[264,"Kalna","Purba Bardhaman","TMC","—","—",65,2,"SC","—","—"]
-[265,"Memari","Purba Bardhaman","TMC","—","Manav Guha",64,2,"","—","—"]
-[266,"Bardhaman Uttar","Purba Bardhaman","TMC","—","Sanjay Das",66,2,"SC","—","—"]
-[267,"Bhatar","Purba Bardhaman","TMC","—","Soumen Karfa",64,2,"","—","—"]
-[268,"Purbasthali Dakshin","Purba Bardhaman","TMC","—","—",63,2,"SC","—","—"]
-[269,"Purbasthali Uttar","Purba Bardhaman","TMC","—","—",63,2,"","—","—"]
-[270,"Katwa","Purba Bardhaman","TMC","—","—",65,2,"","—","—"]
-[271,"Ketugram","Purba Bardhaman","TMC","—","Anadi Ghosh (Mathura)",64,2,"SC","—","—"]
-[272,"Mangalkot","Purba Bardhaman","TMC","—","—",64,2,"","—","—"]
-[273,"Ausgram","Purba Bardhaman","SWING","—","Kalita Maji",46,2,"SC","—","—"]
-[274,"Galsi","Purba Bardhaman","TMC","—","—",63,2,"SC","—","—"]
-// PASCHIM BARDHAMAN
-[275,"Pandabeswar","Paschim Bardhaman","BJP","—","Jitendra Kumar Tewari",62,2,"","—","—"]
-[276,"Durgapur Purba","Paschim Bardhaman","TMC","—","Chandra Shekhar Banerjee",59,2,"SC","—","—"]
-[277,"Durgapur Paschim","Paschim Bardhaman","SWING","—","Lakshman Chandra Ghorui",46,2,"","—","—"]
-[278,"Raniganj","Paschim Bardhaman","BJP","—","—",60,2,"","—","—"]
-[279,"Jamuria","Paschim Bardhaman","TMC","—","Dr. Bijan Mukherjee",61,2,"SC","—","—"]
-[280,"Asansol Dakshin","Paschim Bardhaman","BJP","—","Agnimitra Paul",62,2,"","—","—"]
-[281,"Asansol Uttar","Paschim Bardhaman","TMC","—","Krishnendu Mukherjee",58,2,"SC","—","—"]
-[282,"Kulti","Paschim Bardhaman","TMC","—","Ajay Kumar Poddar",59,2,"","—","—"]
-[283,"Barabani","Paschim Bardhaman","TMC","—","Arijit Roy",61,2,"ST","—","—"]
-// BIRBHUM
-[284,"Dubrajpur","Birbhum","TMC","—","Anup Kumar Saha",62,2,"SC","—","—"]
-[285,"Suri","Birbhum","TMC","—","Jagannath Chattopadhyay",63,2,"","—","—"]
-[286,"Bolpur","Birbhum","TMC","—","Dilip Kumar Ghosh",63,2,"","—","—"]
-[287,"Nanoor","Birbhum","TMC","—","Khokan Das",64,2,"SC","—","—"]
-[288,"Labhpur","Birbhum","TMC","—","—",64,2,"","—","—"]
-[289,"Sainthia","Birbhum","TMC","—","—",63,2,"SC","—","—"]
-[290,"Mayureswar","Birbhum","TMC","—","Dudh Kumar Mondal",63,2,"","—","—"]
-[291,"Rampurhat","Birbhum","TMC","—","—",64,2,"","—","—"]
-[292,"Hansan","Birbhum","TMC","—","Nikhil Banerjee",63,2,"","—","—"]
-[293,"Nalhati","Birbhum","TMC","—","—",64,2,"","—","—"]
-[294,"Murarai","Birbhum","TMC","—","—",64,2,"","—","—"]
+[1,"Mekliganj","Cooch Behar","TMC","Paresh Chandra Adhikary","Dadhiram Roy",65,1,"SC","Ila Rani Roy","Kamal Roy (AIFB)"],
+[2,"Mathabhanga","Cooch Behar","BJP","Sablu Barman","Nisith Pramanik",75,1,"SC","Khitendra Barman","Khagen Barman (CPI-M)"],
+[3,"Coochbehar Uttar","Cooch Behar","BJP","Partha Pratim Roy","Sukumar Roy",71,1,"SC","Partha Pratim Ishore","Pranay Karji (CPI-M)"],
+[4,"Coochbehar Dakshin","Cooch Behar","SWING","Avijit De Bhowmick (Hippy)","Rathindra Bose",49,1,"","Khokan Mian","Nazmul Alam Sarkar (AIFB)"],
+[5,"Sitalkuchi","Cooch Behar","TMC","Harihar Das","Savitri Barman",65,1,"SC","Sukamal Barman","Nabadipti Adhikary (CPI-M)"],
+[6,"Sitai","Cooch Behar","TMC","Sangita Roy Basunia","Ashutosh Barma",65,1,"SC","Rabin Roy","Arun Kumar Barma (AIFB)"],
+[7,"Dinhata","Cooch Behar","SWING","Udayan Guha","Ajay Roy",50,1,"","Harihar Singha","Bikash Mondal (AIFB)"],
+[8,"Natabari","Cooch Behar","BJP","Sailen Barma","Girija S. Roy",70,1,"","Biswajit Sarkar","Akik Hassan (CPI-M)"],
+[9,"Tufanganj","Cooch Behar","BJP","Shib Sankar Paul","Malati R. Roy",67,1,"","Debendra Barma","Dhanajoy Rava (CPI-M)"],
+[10,"Kumargram","Alipurduar","BJP","Rajeev Tirkey","Manoj Kumar Oraon",73,1,"ST","Sudham Lama","Kishore Minz (RSP)"],
+[11,"Kalchini","Alipurduar","BJP","Birendra Bara","Bishal Lama",77,1,"ST","Anjan Chik Baraik","Passang Sherpa (RSP)"],
+[12,"Alipurduar","Alipurduar","SWING","Suman Kanjilal","Paritosh Das",50,1,"","—","Shyamol Roy (CPI-M)"],
+[13,"Falakata","Alipurduar","BJP","Subhash Chandra Roy","Deepak Barman",64,1,"SC","Akshoy Kumar Barman","Kamal Kishore Roy (CPI-M)"],
+[14,"Madarihat","Alipurduar","TMC","Jayprakash Toppo","Lakshman Limbu",65,1,"ST","Dr. Joy Prafulla Lakra","Subhas Lohar (RSP)"],
+[15,"Dhupguri","Jalpaiguri","BJP","Dr Nirmal Chandra Roy","Naresh Chandra Roy",60,1,"SC","Harish Chandra Roy","Niranjan Roy (CPI-M)"],
+[16,"Maynaguri","Jalpaiguri","BJP","Ram Mohan Roy","Kaushik Roy",61,1,"SC","Jogen Sarkar","Sudeb Roy (RSP)"],
+[17,"Jalpaiguri","Jalpaiguri","TMC","Krishna Das","Ananta Deb Adhikary",65,1,"SC","Sudipto Mohonto","Debraj Barman (CPI-M)"],
+[18,"Rajganj","Jalpaiguri","TMC","Swapna Barman","Dinesh Sarkar",65,1,"SC","Tushar Kanti Roy","Kharendra Nath Roy (CPI-M)"],
+[19,"Dabgram-Phulbari","Jalpaiguri","BJP","Ranjan Shil Sharma","Sikha Chatterjee",61,1,"","Rohit Singh Sisodiya","Dilip Singh (CPI-M)"],
+[20,"Mal","Jalpaiguri","TMC","Bulu Chik Baraik","Sukra Munda",65,1,"ST","Rakesh Kujur","Manu Oraon (CPI-M)"],
+[21,"Nagrakata","Jalpaiguri","BJP","Sanjay Kujur","Puna Bhengra",65,1,"ST","Shinu Munda","Dilkumar Oraon (CPI-M)"],
+[22,"Kalimpong","Kalimpong","BGPM","—","Bharat Chetri",72,1,"","Santa Kumar Pradhan","—"],
+[23,"Darjeeling","Darjeeling","BGPM","—","Noman Rai",73,1,"","Madhap Rai","—"],
+[24,"Kurseong","Darjeeling","BGPM","—","Sonam Lama",70,1,"","Saroj Kumar Khatri","—"],
+[25,"Matigara-Naxalbari","Darjeeling","BJP","Sankar Malakar","Anandamay Barman",65,1,"SC","Amitava Sarkar","Jharen Roy (CPI-M)"],
+[26,"Siliguri","Darjeeling","SWING","Goutam Deb","Dr. Shankar Ghosh",46,1,"","Aloke Dhara","Sharadindu Chakraborty (CPI-M)"],
+[27,"Phansidewa","Darjeeling","BJP","Reena Toppo Ekka","Durga Murmu",63,1,"ST","Nabanita Tirkey","—"],
+[28,"Chopra","Uttar Dinajpur","TMC","Hamidul Rahaman","Shankar Adhikari",65,1,"","Zakir Abedin","Makleswar Rahaman (CPI-M)"],
+[29,"Islampur","Uttar Dinajpur","TMC","Kanaia Lal Aggarwal","Chitrajit Roy",65,1,"","—","Bazil Akhtar (CPI-M)"],
+[30,"Goalpokhar","Uttar Dinajpur","TMC","Md. Ghulam Rabbani","Sarjit Biswas",65,1,"","Masood Md Naseem","Juber Alam (AIFB)"],
+[31,"Chakulia","Uttar Dinajpur","SWING","Minhajul Arfin Azad","Manoj Jain",46,1,"","Ali Imran Ramz","Amjad Ali (AIFB)"],
+[32,"Karandighi","Uttar Dinajpur","TMC","Gautam Paul","Adv. Biraj Biswas",65,1,"","Murshid Alam","Md. Sahabuddin (CPI-M)"],
+[33,"Hemtabad","Uttar Dinajpur","TMC","Satyajit Barman","Haripada Barman",65,1,"SC","Anamika Roy","Tanushree Das (CPI-M)"],
+[34,"Kaliaganj","Uttar Dinajpur","SWING","Nitai Baishya","Utpal Maharaj",46,1,"SC","Girdhari Pramanik","Hirubala Roy (CPI-M)"],
+[35,"Raiganj","Uttar Dinajpur","TMC","Krishna Kalyani","Kaushik Chowdhury",65,1,"","Mohit Sengupta","Jibananda Singha (CPI-M)"],
+[36,"Itahar","Uttar Dinajpur","TMC","Mosaraf Hussain","Sabita Barman",65,1,"","Amal Acharya","Sudipta Das (CPI)"],
+[37,"Kushmandi","Dakshin Dinajpur","TMC","Rekha Roy","Tapas Chandra Roy",65,1,"SC","Bablu Sarkar","Jyotirmoy Roy (RSP)"],
+[38,"Kumarganj","Dakshin Dinajpur","TMC","Toraf Hossain Mondal","Suvendu Sarkar",65,1,"","Gulam Martuja Mandal","Mofazzal Hossain (CPI-M)"],
+[39,"Balurghat","Dakshin Dinajpur","BJP","Arpita Ghosh","Bidyut Roy",63,1,"","Pradip Kumar Mitra","Arnab Choudhury (RSP)"],
+[40,"Tapan","Dakshin Dinajpur","BJP","Chintamoni Biha","Budhrai Tudu",64,1,"ST","Bankim Chandra Toppo","Bappai Haro (RSP)"],
+[41,"Gangarampur","Dakshin Dinajpur","BJP","Goutam Das","Satyendra Nath Rai",63,1,"SC","Jui Barman","Biplab Barman (CPI-M)"],
+[42,"Harirampur","Dakshin Dinajpur","TMC","Biplab Mitra","Debabrata Majumder",65,1,"","Subhasish Pal","Gautam Goswami (CPI-M)"],
+[43,"Habibpur","Malda","BJP","Amal Kisku","Joyel Murmu",64,1,"ST","Rajen Soren","Basudeb Barman (CPI-M)"],
+[44,"Gazole","Malda","BJP","Prasenjit Das","Chinmoy Deb Barman",62,1,"SC","Sanjay Sarkar","Khitish Sarkar (CPI-M)"],
+[45,"Chanchal","Malda","TMC","Prasun Banerjee","Ratan Das",65,1,"","Asif Mehbub","Anawarul Haque (CPI-M)"],
+[46,"Harishchandrapur","Malda","TMC","Md. Matebur Rahman","Ratan Das",65,1,"","Mostaque Alam","Sk. Khalil (CPI-M)"],
+[47,"Malatipur","Malda","SWING","Abdur Rahim Boxi","Ashish Das",46,1,"","Mausam Noor","Minarul Hossain (CPI-M)"],
+[48,"Ratua","Malda","TMC","Samar Mukherjee","Abhishek Singhania",65,1,"","Mottakin Alam","Jahur Alam (CPI-M)"],
+[49,"Manikchak","Malda","TMC","Kabita Mandal","Gaur Chandra Mandal",65,1,"","Ansarul Hoque","Debojyoti Sinha (CPI-M)"],
+[50,"Maldaha","Malda","BJP","Lipika Barman Ghosh","Gopal Chandra Saha",60,1,"SC","Bhupendra Nath Haldar","Dipak Barman (CPI)"],
+[51,"English Bazar","Malda","TMC","Asis Kundu","Amlan Bhaduri",65,1,"","Masud Alam","Ambar Mitra (CPI-M)"],
+[52,"Mothabari","Malda","TMC","Md. Najrul Islam","Nibaran Ghosh",65,1,"","Sayem Chowdhury","—"],
+[53,"Sujapur","Malda","TMC","Sabina Yeasmin","Abhiraj Chaudhary",65,1,"","Md Abdul Hannan","—"],
+[54,"Baisnabnagar","Malda","TMC","Chandana Sarkar","Raju Karmakar",65,1,"","Mamuni Mandal","Dundhubi Saha (RSP)"],
+[55,"Farakka","Murshidabad","TMC","Amirul Islam","Sunil Chowdhury",65,1,"","—","Mojaffar Hossain (CPI-M)"],
+[56,"Samserganj","Murshidabad","TMC","Nur Alam","Shashthi Charan Ghosh",65,1,"","Nazme Alam","—"],
+[57,"Suti","Murshidabad","TMC","Emani Biswas","Mahabir Ghosh",65,1,"","Alfazuddin Biswas","A.K.M. Hasanujjaman (RSP)"],
+[58,"Jangipur","Murshidabad","TMC","Jakir Hossain","Adv. Chitto Mukherjee",65,1,"","Mohammad Imran Ali","Alok Kumar Das (CPI-M)"],
+[59,"Raghunathganj","Murshidabad","TMC","Janab Akhruzzaman","Surjit Poddar",65,1,"","Nasir Saikh","Abul Hasnat (CPI-M)"],
+[60,"Sagardighi","Murshidabad","TMC","Bayron Biswas","Tapas Chakraborty",65,1,"","—","—"],
+[61,"Lalgola","Murshidabad","TMC","Dr. Abdul Aziz","Amar Kumar Das",65,1,"","Md. Touhidur Rahaman","Babluzzaman (CPI-M)"],
+[62,"Bhagawangola","Murshidabad","TMC","Reyat Hussain Sarkar","Bhaskar Sarkar",65,1,"","Anju Begum","Mahmud Al Hassan (CPI-M)"],
+[63,"Raninagar","Murshidabad","SWING","Soumik Hussain","Rana Pratap Singh Roy",43,1,"","Zulfikur Ali","Jamal Hossain (CPI-M)"],
+[64,"Murshidabad","Murshidabad","BJP","Shaoni Singha Roy","Gouri Sankar Ghosh",59,1,"","Siddiqi Ali","Abdul Mannan (AIFB)"],
+[65,"Nabagram","Murshidabad","TMC","Pranab Chandra Das","Dilip Saha",65,1,"SC","Hiru Haldar","Purnima Das (CPI-M)"],
+[66,"Khargram","Murshidabad","TMC","Ashish Marjit","Mitali Mal",65,1,"SC","Dr. Mandar Kanti Mandal","Dhrubajyoti Saha (CPI-M)"],
+[67,"Burwan","Murshidabad","TMC","Pratima Rajak","Sukhen Kumar Bagdi",65,1,"SC","Sujit Das","Ananda Das (RSP)"],
+[68,"Kandi","Murshidabad","TMC","Apurba Sarkar (David)","Gargi Das Ghosh",65,1,"","Dr. Shamim Rana","Dr. Rejaul Karim (CPI)"],
+[69,"Bharatpur","Murshidabad","SWING","Mustafizur Rahaman (Sumon)","Anamika Ghosh",44,1,"","Azharudddin Sizar","—"],
+[70,"Rejinagar","Murshidabad","SWING","Ataur Rahman","Bapan Ghosh",43,1,"","Jillu Sk.","—"],
+[71,"Beldanga","Murshidabad","TMC","Rabiul Alam Chowdhury","Bharat Kumar Jhawar",65,1,"","—","Rajesh Ghosh (RSP)"],
+[72,"Baharampur","Murshidabad","INC","Naru Gopal Mukherjee","Subrata Maitra",66,1,"","Adhir Ranjan Chowdhury","—"],
+[73,"Hariharpara","Murshidabad","TMC","Niamot Seikh","Tanmoy Biswas",65,1,"","Mousumi Begum","Zamiruddin Molla (CPI-M)"],
+[74,"Nowda","Murshidabad","SWING","Shahina Mumtaz","Rana Mandal",43,1,"","Motiur Rahaman","Habibur Rahaman Mondal (RSP)"],
+[75,"Domkal","Murshidabad","SWING","Humayun Kabir (Ex IPS)","Nanda Dulal Pal",43,1,"","Sahnaz Begum","Mostafijur Rahaman (CPI-M)"],
+[76,"Jalangi","Murshidabad","TMC","Babar Ali","Naba Kumar Sarkar",65,1,"","Abdul Rezzak Molla","Ianusali Sarkar (CPI-M)"],
+[77,"Karimpur","Nadia","TMC","Soham Chakraborty","Samarendranath Ghosh",65,2,"","Pooja Roy Chowdhury","Pravas Majumder (CPI-M)"],
+[78,"Tehatta","Nadia","TMC","Dilip Poddar","Subrata Kabiraj",65,2,"","Jyotirmoy Sarkar","Subodh Biswas (CPI-M)"],
+[79,"Palashipara","Nadia","TMC","Rukbanur Rahman","Anima Dutta",65,2,"","Hamidul Haque","—"],
+[80,"Kaliganj","Nadia","TMC","Alifa Ahmed","Bapan Ghosh",65,2,"","Kabil Uddin Shaikh","Sabina Yasmin (CPI-M)"],
+[81,"Nakashipara","Nadia","TMC","Kallol Kha","Shantanu Dey",65,2,"","Golam Kibria Mandal","Sukla Saha (CPI-M)"],
+[82,"Chapra","Nadia","TMC","Jeber Sekh","Saikat Sarkar",65,2,"","Rahidul Mandal","—"],
+[83,"Krishnanagar Uttar","Nadia","TMC","Avinabha Bhattacharya","—",65,2,"","Arghya Gon","Adwaita Biswas (CPI-M)"],
+[84,"Nabadwip","Nadia","TMC","Pundarikakshya Saha","Sruti Sekhar Goswami",65,2,"","Samir Saha","Swarnendu Sinha (CPI-M)"],
+[85,"Krishnanagar Dakshin","Nadia","TMC","Ujjwal Biswas","Sadhan Ghosh",65,2,"","Abdur Rahim Shaikh","—"],
+[86,"Santipur","Nadia","TMC","Braja Kishore Goswami","Swapan Das",65,2,"","Alok Chatterjee","Soumen Mahato (CPI-M)"],
+[87,"Ranaghat Uttar Paschim","Nadia","BJP","Tapas Ghosh","Parthasarathi Chatterjee",64,2,"","Naba Kumar Mondal","Debasish Chakraborty (CPI-M)"],
+[88,"Krishnaganj","Nadia","BJP","Samir Kumar Poddar","Ashish Kumar Biswas",70,2,"SC","Sankar Kumar Sarkar","Archana Biswas (CPI-M)"],
+[89,"Ranaghat Uttar Purba","Nadia","BJP","Barnali Dey Roy","Ashim Biswas",67,2,"SC","Nitya Gopal Mondal","Mrinal Biswas (CPI-M)"],
+[90,"Ranaghat Dakshin","Nadia","SWING","Dr. Sougata Kumar Burman","Swapan Majumder",50,2,"SC","Rita Pal Das","Arindam Biswas (CPI-M)"],
+[91,"Chakdaha","Nadia","BJP","Subhankar Singha (Jishu)","Bankim Chandra Ghosh",61,2,"","Malay Saha","Narayan Dasgupta (CPI-M)"],
+[92,"Kalyani","Nadia","TMC","Dr. Atindra Nath Mondal","—",65,2,"SC","Asimananda Majumder","Sabuj Das (CPI-M)"],
+[93,"Haringhata","Nadia","BJP","Dr. Rajib Biswas","Asim Kumar Sarkar",66,2,"SC","Himanti Das","Swapan Sarkar (CPI-M)"],
+[94,"Bagdah","North 24 Pgs","SWING","Madhuparna Thakur","Soma Thakur",50,2,"SC","Prabir Kirtania","Gour Biswas (AIFB)"],
+[95,"Bangaon Uttar","North 24 Pgs","BJP","Biswajit Das","Subrata Thakur",70,2,"SC","Nilanjan Saha","Pijush Saha (CPI-M)"],
+[96,"Bangaon Dakshin","North 24 Pgs","BJP","Rituparna Addhya","Tarak Saha",68,2,"SC","Kishor Biswas","Asish Sarkar (CPI-M)"],
+[97,"Gaighata","North 24 Pgs","BJP","Narottam Biswas","Sukanta Biswas",65,2,"SC","Anil Kumar Pandey","Dr. Sajal Biswas (CPI)"],
+[98,"Swarupnagar","North 24 Pgs","TMC","Bina Mondal","Ashim Kumar Biswas",65,2,"SC","Ritesh Mondal","Biswajit Mondal (CPI-M)"],
+[99,"Baduria","North 24 Pgs","TMC","Burhanul Mokaddin (Liton)","Sukriti Sarkar",65,2,"","—","—"],
+[100,"Habra","North 24 Pgs","TMC","Jyotipriya Mallick (Balu)","Devdas Mandal",65,2,"","—","Riji Nandan Biswas (CPI-M)"],
+[101,"Ashoknagar","North 24 Pgs","TMC","Narayan Goswami","Dr. Somoy Hira",65,2,"","—","—"],
+[102,"Amdanga","North 24 Pgs","TMC","Peerzada Kasem Siddiqui","Arindam Dey",65,2,"","Gopal Ghosh","—"],
+[103,"Bijpur","North 24 Pgs","TMC","Subodh Adhikary","Sudipta Das",65,2,"","Sibabrata Guha Roy","Debasish Rakshit (CPI-M)"],
+[104,"Naihati","North 24 Pgs","TMC","Sanat Dey","Sumitro Chaterjee",65,2,"","Pradip Kumar Kundu","—"],
+[105,"Bhatpara","North 24 Pgs","SWING","Amit Gupta","Pawan Kumar Singh",46,2,"","Dharmendra Shaw","Aasnarayan Singh (CPI-M)"],
+[106,"Jagatdal","North 24 Pgs","TMC","Somenath Shyam Ichini","Dr. Rajesh Kumar",65,2,"","Mandira Chakraborty","Parvej Ahmad Khan (AIFB)"],
+[107,"Noapara","North 24 Pgs","TMC","Trinankur Bhattacharya","Arjun Singh",65,2,"","Asoke Bhattacharya","Gargi Chatterjee (CPI-M)"],
+[108,"Barrackpore","North 24 Pgs","TMC","Raju Chakrabarty (Raj)","Koustav Bagchi",65,2,"","Sambhu Das","Prof. Suman Bandyopadhyay (CPI-M)"],
+[109,"Khardaha","North 24 Pgs","TMC","Devdeep Purohit","Dr. Kalyan Chakraborty",65,2,"","Joydev Ghosh","Debojyoti Das (CPI-M)"],
+[110,"Dum Dum Uttar","North 24 Pgs","TMC","Chandrima Bhattacharya","—",65,2,"","Dhananjoy Moitra","Dipsita Dhar (CPI-M)"],
+[111,"Panihati","North 24 Pgs","SWING","Tirthankar Ghosh (Puchi)","Ratna Debnath",48,2,"","Subhashis Bhattacharya","Kalatan Dasgupta (CPI-M)"],
+[112,"Kamarhati","North 24 Pgs","TMC","Madan Mitra","Arup Choudhury",65,2,"","Kallol Mukherjee","Manas Mukherjee (CPI-M)"],
+[113,"Baranagar","North 24 Pgs","TMC","Sayantika Banerjee","Sajal Ghosh",65,2,"","Kalyani Chakraborty","Sayandip Mitra (CPI-M)"],
+[114,"Dum Dum","North 24 Pgs","TMC","Bratya Basu","Adv. Arijit Bakshi",65,2,"","Susmita Biswas","Mayukh Biswas (CPI-M)"],
+[115,"Rajarhat New Town","North 24 Pgs","TMC","Tapash Chatterjee","Piyush Kanodia",65,2,"","SK Nijamuddin","Saptarshi Deb (CPI-M)"],
+[116,"Bidhannagar","North 24 Pgs","TMC","Sujit Bose","Dr. Sharadwat Mukhopadhyay",65,2,"","Ranajit Mukherjee","Adv. Soumyajit Raha (CPI-M)"],
+[117,"Rajarhat Gopalpur","North 24 Pgs","TMC","Aditi Munshi","Tarun Jyoti Tiwari",65,2,"","Partha Bhaumik","Subhajit Dasgupta (CPI-M)"],
+[118,"Madhyamgram","North 24 Pgs","TMC","Rathin Ghosh","—",65,2,"","Ananta Roy","—"],
+[119,"Barasat","North 24 Pgs","TMC","Sabyasachi Dutta","Sankar Chatterjee",65,2,"","Tarak Mukherjee","Hemanta Das (AIFB)"],
+[120,"Deganga","North 24 Pgs","TMC","Anisur Rahaman (Bidesh)","Tarun Kanti Ghosh",65,2,"","Miaraj Baidya","—"],
+[121,"Haroa","North 24 Pgs","TMC","Md. Mufti Abdul Matin (Matin Saheb)","Bhaskar Mondal",65,2,"","Md Rabiul Molla","—"],
+[122,"Minakhan","North 24 Pgs","TMC","Usha Rani Mondal","Rudrendra Patra",65,2,"SC","Barnali Naskar","—"],
+[123,"Sandeshkhali","North 24 Pgs","TMC","Jharna Sardar","Rekha Patra",65,2,"ST","Judhisthir Bhumiji","—"],
+[124,"Basirhat Dakshin","North 24 Pgs","TMC","Surajit Mitra (Badal)","Dr. Suraj Banerjee",65,2,"","Abu Ishak Gazi","Ainul Arefin (CPI-M)"],
+[125,"Basirhat Uttar","North 24 Pgs","TMC","Md Tauseef Rehman","Narayan Chandra Mondal",65,2,"","Musa Haque Mondal","—"],
+[126,"Hingalganj","North 24 Pgs","TMC","Ananda Sarkar","Vikarno Naskar",65,2,"SC","Biswajit Roy","Soumen Halder (CPI)"],
+[127,"Gosaba","South 24 Pgs","TMC","Subrata Mondal","Sumanta Mandal",65,2,"SC","Bhupal Chandra Das","Aditya Jotdar (RSP)"],
+[128,"Basanti","South 24 Pgs","TMC","Nilima Bishal Mistry","Bikash Sardar",65,2,"SC","Gopinath Naiya","—"],
+[129,"Kultali","South 24 Pgs","TMC","Ganesh Chandra Mondal","Madhabi Mahalder",65,2,"SC","Rupa Halder","Ramsankar Halder (CPI-M)"],
+[130,"Patharpratima","South 24 Pgs","TMC","Samir Kumar Jana","Asit Kumar Haldar",65,2,"","Subhrangshu Nayek","Satya Ranjan Das (CPI-M)"],
+[131,"Kakdwip","South 24 Pgs","TMC","Manturam Pakhira","Deepankar Jana",65,2,"","Nasiruddin Ahamed","Narayan Das (CPI-M)"],
+[132,"Sagar","South 24 Pgs","TMC","Bankim Chandra Hazra","Abni Naskar",65,2,"","Prasanta Khutia","Swapan Singha (CPI-M)"],
+[133,"Kulpi","South 24 Pgs","TMC","Barnali Dhara","Mallika Paik",65,2,"","Kutub Uddin Molla","—"],
+[134,"Raidighi","South 24 Pgs","TMC","Tapas Mondal","Palash Rana",65,2,"","Asish Kumar Mandal","Samya Ganguly (CPI-M)"],
+[135,"Mandirbazar","South 24 Pgs","TMC","Joydeb Halder","Sanat Sardar",65,2,"SC","Dr. Kaushik Baidya","—"],
+[136,"Jaynagar","South 24 Pgs","TMC","Biswanath Das","Tumpa Sardar",65,2,"SC","Tapas Baidya","Apurba Pramanik (CPI-M)"],
+[137,"Baruipur Purba","South 24 Pgs","TMC","Bivas Sardar","Prasanta Bayen",65,2,"SC","Pratap Chandra Mondal","Swapan Naskar (CPI-M)"],
+[138,"Canning Paschim","South 24 Pgs","TMC","Paresh Ram Das","Biswajit Paul",65,2,"SC","Haran Chandra Mistry","—"],
+[139,"Canning Purba","South 24 Pgs","TMC","Md. Baharul Islam","Ashim Sapui",65,2,"","Sabir Ali Sardar","—"],
+[140,"Baruipur Paschim","South 24 Pgs","TMC","Biman Banerjee","Alok Halder",65,2,"","Asitlal Nag","Lahek Ali (CPI-M)"],
+[141,"Magrahat Purba","South 24 Pgs","TMC","Sharmistha Purkait","Uttam Kumar Banik",65,2,"SC","Dr. Atanu Halder","Chandan Saha (CPI-M)"],
+[142,"Magrahat Paschim","South 24 Pgs","TMC","Shamim Ahmed","Gour Sundar Ghosh",65,2,"","Abdul Majid Halder","—"],
+[143,"Diamond Harbour","South 24 Pgs","TMC","Pannalal Halder","Dipak Kumar Halder",65,2,"","Goutam Bhattacharya","Samarendra Nath Naiya (CPI-M)"],
+[144,"Falta","South 24 Pgs","TMC","Jahangir Khan","Debangshu Panda",65,2,"","Abdur Rajjak Molla","Sambhu Kurmi (CPI-M)"],
+[145,"Satgachia","South 24 Pgs","TMC","Somashree Betal","Agniswar Naskar",65,2,"","Pravash Ghosh","Gautam Pal (CPI-M)"],
+[146,"Bishnupur","South 24 Pgs","TMC","Dilip Mondal","Viswajit Khan",65,2,"SC","Arghya Naskar","Shyamal Dal (CPI-M)"],
+[147,"Sonarpur Dakshin","South 24 Pgs","SWING","Arundhuti Maitra (Lovely)","Roopa Ganguly",49,2,"","Subrata Datta","Paramita Dasgupta (CPI)"],
+[148,"Bhangar","South 24 Pgs","TMC","Saokat Molla","Jayanta Gayen",65,2,"","Mahabubul Islam","—"],
+[149,"Kasba","South 24 Pgs","TMC","Javed Ahmed Khan","Sandeep Banerjee",65,2,"","Hasim Zeshan Ahmad","Dipu Das (CPI-M)"],
+[150,"Jadavpur","South 24 Pgs","TMC","Debabrata Majumdar","Sarbori Mukherjee",65,2,"","Shyamali Mandal","Bikash Ranjan Bhattacharya (CPI-M)"],
+[151,"Sonarpur Uttar","South 24 Pgs","TMC","Firdousi Begum","Debashish Dhar",65,2,"","Dr. Jagannath Kumir","Monalisa Sinha (CPI-M)"],
+[152,"Tollygunge","South 24 Pgs","TMC","Aroop Biswas","Papiya Dey Adhikari",65,2,"","Manas Sinha Roy","Prof. Partha Pratim Biswas (CPI-M)"],
+[153,"Behala Purba","South 24 Pgs","TMC","Subhasish Chakraborty","Sunil Maharaj",65,2,"","Abhijit Raha","Dr. Niloy Majumder (CPI-M)"],
+[154,"Behala Paschim","South 24 Pgs","TMC","Ratna Chatterjee","Dr. Indranil Khan",65,2,"","Saibal Roy","Nihar Bhakta (CPI-M)"],
+[155,"Maheshtala","South 24 Pgs","TMC","Subhasis Das","Tamanath Bhowmik",65,2,"","Haji Abdul Hannan","Adv. Sayan Banerjee (CPI-M)"],
+[156,"Budge Budge","South 24 Pgs","TMC","Ashok Kumar Deb","Dr. Tarun Kumar Adak",65,2,"","Mujibar Rahaman Kayal","—"],
+[157,"Metiabruz","South 24 Pgs","TMC","Abdul Khaleque Molla","Veer Bahadur Singh",65,2,"","Md. Mukhtar","Adv. Monirul Islam (CPI-M)"],
+[158,"Kolkata Port","Kolkata","TMC","Firhad Hakim","—",65,2,"","Aquib Gulzar","Faiyaz Khan (CPI-M)"],
+[159,"Bhabanipur","Kolkata","TMC","Mamata Banerjee","Suvendu Adhikari",65,2,"","Pradip Prasad","Adv. Srijeeb Biswas (CPI-M)"],
+[160,"Rashbehari","Kolkata","TMC","Debasish Kumar","Swapan Das Gupta",65,2,"","Ashutosh Chatterjee","—"],
+[161,"Ballygunge","Kolkata","TMC","Sovandeb Chattopadhyay","Dr. Shatrupa",65,2,"","Rohan Mitra","Afrin Begam (CPI-M)"],
+[162,"Chowrangee","Kolkata","TMC","Nayna Bandopadhyay","Santosh Pathak",65,2,"","Manash Sarkar","Sanjoy Basu (RCPI)"],
+[163,"Entally","Kolkata","TMC","Sandipan Saha","Priyanka Tibrewal",65,2,"","Kashif Reza","Abdur Rouf (CPI-M)"],
+[164,"Beleghata","Kolkata","TMC","Kunal Ghosh","Dr. Partha Choudhary",65,2,"","Shahina Javed","Paramita Roy (CPI-M)"],
+[165,"Jorasanko","Kolkata","TMC","Vijay Upadhayay","Vijay Ojha",65,2,"","Deepak Singh","Bharat Ram Tiwari (CPI-M)"],
+[166,"Shyampukur","Kolkata","TMC","Dr. Shashi Panja","Poornima Chakraborty",65,2,"","Purna Ghosh","Jhuma Das (AIFB)"],
+[167,"Maniktala","Kolkata","TMC","Shrreya Pandey","Tapas Roy",65,2,"","Suman Roy Chowdhury","Mousumi Ghosh (CPI)"],
+[168,"Kashipur-Belgachhia","Kolkata","TMC","Atin Ghosh","Ritesh Tiwari",65,2,"","Tarak Pal","Rajinder Gupta (CPI-M)"],
+[169,"Bally","Howrah","TMC","Kailash Mishra","Sanjay Singh",65,2,"","Priyanka Choudhury","Sankar Moitra (CPI-M)"],
+[170,"Howrah Uttar","Howrah","TMC","Goutam Chowdhury","Umesh Rai",65,2,"","Om Prakash Jaiswal","Prof. Gautam Roy (CPI-M)"],
+[171,"Howrah Madhya","Howrah","TMC","Arup Roy","Biplab Mandal",65,2,"","Aparna Bose","Adv. Imteaz Ahmed (CPI-M)"],
+[172,"Shibpur","Howrah","TMC","Dr Rana Chatterjee","Rudranil Ghosh",65,2,"","Shrabanti Singh","Dr. Jagannath Bhattacharya (AIFB)"],
+[173,"Howrah Dakshin","Howrah","TMC","Nandita Choudhary","Shyamal Hati",65,2,"","Deepsikha Bhowmick","Dr. Abhijit Bandyopadhyay (CPI-M)"],
+[174,"Sankrail","Howrah","TMC","Priya Paul","Barnali Dhali",65,2,"SC","Bechu Ram Malik","Samir Malick (CPI-M)"],
+[175,"Panchla","Howrah","TMC","Gulshan Mullick","Ranjan Kumar Paul",65,2,"","Rahul Pandey","Farid Molla (AIFB)"],
+[176,"Uluberia Purba","Howrah","SWING","Ritabrata Banerjee","—",62,2,"","Alam Deiyan SK","—"],
+[177,"Uluberia Uttar","Howrah","TMC","Bimal Kumar Das","Chiran Bera",65,2,"SC","Kalyani Haldar","Ashok Dolui (CPI-M)"],
+[178,"Uluberia Dakshin","Howrah","TMC","Pulak Roy","Swami Mangalanand Puri",65,2,"","Intaz Ali Shah","Amirul Islam Khan (AIFB)"],
+[179,"Shyampur","Howrah","TMC","Nadebasi Jana","Dr. Hiranmoy Chattopadhyay",65,2,"","SK. Manjur Alam","Asit Baran Sau (AIFB)"],
+[180,"Bagnan","Howrah","TMC","Arunava Sen","Premangshu Rana",65,2,"","Sk. Hafizur Rahaman","Bhaskar Roy (CPI-M)"],
+[181,"Amta","Howrah","TMC","Sukanta Paul","Amit Samanta",65,2,"","Tapan Das","Joshimuddin Mallick (CPI-M)"],
+[182,"Udaynarayanpur","Howrah","TMC","Samir Kumar Panja","Prabhakar Pandit",65,2,"","Asit Bakuly","Shasthi Maji (CPI-M)"],
+[183,"Jagatballavpur","Howrah","TMC","Subir Chatterjee","Anupam Ghosh",65,2,"","Koushik Roy","—"],
+[184,"Domjur","Howrah","TMC","Tapas Maity","Gobinda Hazra",65,2,"","Aloke Koley","Dulu Das (CPI-M)"],
+[185,"Uttarpara","Hooghly","BJP","Sirsanya Bandopadhyay","Dipanjan Chakraborty",60,2,"","Subrata Mukherjee","Minakshi Mukherjee (CPI-M)"],
+[186,"Sreerampur","Hooghly","BJP","Tanmoy Ghosh","Bhaskar Bhattacharya",57,2,"","—","Nabanita Chakraborty (CPI-M)"],
+[187,"Champdani","Hooghly","TMC","Arindam Guin","Dilip Singh",65,2,"","Pritam Ghosh","Adv. Chandranath Banerjee (CPI-M)"],
+[188,"Singur","Hooghly","TMC","Becharam Manna","Dr. Arup Kumar Das",65,2,"","Barun Kumar Malik","Debasish Chatterjee (CPI-M)"],
+[189,"Chandannagar","Hooghly","SWING","Indranil Sen","Deepanjan Kumar Guha",46,2,"","Ratan Kumar Goldar","Manish Panda (CPI-M)"],
+[190,"Chunchura","Hooghly","TMC","Debangshu Bhattacharya","Subir Nag",65,2,"","Moinul Haque","Sunil Saha (AIFB)"],
+[191,"Balagarh","Hooghly","TMC","Ranjan Dhara","Sumana Sarkar",65,2,"SC","Ashok Biswas","Bikash Goldar (CPI-M)"],
+[192,"Pandua","Hooghly","TMC","Samir Chakraborty (Bua)","Tushar Kumar Majumdar",65,2,"","Sanatan Mandi","Amjad Hossain (CPI-M)"],
+[193,"Saptagram","Hooghly","TMC","Bidesh Bose","Swaraj Ghosh",65,2,"","Sougata Ghosh","Anirban Sarkar (CPI-M)"],
+[194,"Chanditala","Hooghly","TMC","Swati Khandoker","Debasish Mukherjee",65,2,"","Sk Abu Abbasuddin","Sk. Asif Ali (CPI-M)"],
+[195,"Jangipara","Hooghly","TMC","Snehasis Chakraborty","Prasenjit Bag",65,2,"","Subhashis Datta","Sudipta Sarkar (CPI-M)"],
+[196,"Haripal","Hooghly","TMC","Dr. Karabi Manna","Madhumita Ghosh",65,2,"","Saif Azad","—"],
+[197,"Dhanekhali","Hooghly","TMC","Asima Patra","Barnali Das",65,2,"SC","Jyoti Kumari Das","—"],
+[198,"Tarakeswar","Hooghly","TMC","Ramendu Singha Roy","Santu Pan",65,2,"","Bhabani Prasad Mondal","Abesh Khamrui (CPI-M)"],
+[199,"Pursurah","Hooghly","TMC","Partha Hazari","Biman Ghosh",65,2,"","Sk. Habibar Rahaman","Sandip Kumar Samanta (CPI-M)"],
+[200,"Arambag","Hooghly","TMC","Mita Bag","Hemanta Bag",65,2,"SC","Sushil Kumar Santra","Bithika Pandit (CPI-M)"],
+[201,"Goghat","Hooghly","TMC","Dr. Nirmal Maji","Prashanta Dighar",65,2,"SC","Haradhan Santra","Muktaram Dhaure (AIFB)"],
+[202,"Khanakul","Hooghly","TMC","Palash Roy","Susanta Ghosh",65,2,"","Pradip Kumar Kar","—"],
+[203,"Tamluk","Purba Medinipur","TMC","Dipendra Narayan Roy","Dr. Hare Krishna Bera",65,2,"","Haradhan Mazumder","Nabendu Ghara (CPI)"],
+[204,"Panskura Purba","Purba Medinipur","TMC","Asim Kumar Maji","Subrata Maity",65,2,"","Dipak Patra","Ibrahim Ali (CPI-M)"],
+[205,"Panskura Paschim","Purba Medinipur","TMC","Siraj Khan","Sintu Senapati",65,2,"","Kalyan Roy","Niranjan Sihi (CPI-M)"],
+[206,"Moyna","Purba Medinipur","TMC","Chandan Mondal","Ashok Dinda",65,2,"","Nimai Barman","Swapan Barman (CPI)"],
+[207,"Nandakumar","Purba Medinipur","TMC","Sukumar Dey","Dibendu Adhikari",65,2,"","Sekh Matin","Ashok Patra (CPI-M)"],
+[208,"Mahisadal","Purba Medinipur","TMC","Tilak Kumar Chakraborty","Subhash Panja",65,2,"","Kajal Nayek Das","—"],
+[209,"Haldia","Purba Medinipur","TMC","Tapasi Mandal","—",65,2,"SC","—","Ashok Patra (CPI-M)"],
+[210,"Nandigram","Purba Medinipur","BJP","Pabitra Kar","Suvendu Adhikari",55,2,"","SK Jariatul Hossain","Shanti Giri (CPI)"],
+[211,"Chandipur","Purba Medinipur","TMC","Uttam Barik","Dr. Piyush Kanti Das",65,2,"","SK Taslim Ahmed","Rita Das (CPI-M)"],
+[212,"Patashpur","Purba Medinipur","TMC","Pijus Kanti Panda","Tapan Maity",65,2,"","—","Saikat Giri (CPI)"],
+[213,"Kanthi Uttar","Purba Medinipur","TMC","Debasis Bhunia (Lalu)","Sumita Sinha",65,2,"","Subrata Mahapatra","Sutanu Maity (CPI-M)"],
+[214,"Bhagabanpur","Purba Medinipur","TMC","Manab Kumar Porua","Nirmal Khanra",65,2,"","Biswajit Panigrahi","—"],
+[215,"Khejuri","Purba Medinipur","TMC","Rabin Chandra Mandal","Santanu Pramanik",65,2,"SC","Asit Pramanik","Himangshu Das (CPI-M)"],
+[216,"Kanthi Dakshin","Purba Medinipur","BJP","Tarun Kr Jana","Arup Kumar Das",62,2,"","Sk. Masud Malik","Teharan Hossain (CPI)"],
+[217,"Ramnagar","Purba Medinipur","TMC","Akhil Giri","Chandra Sekhar Mondal",65,2,"","Manas Kumar Dutta","Ashoke Kumar Maity (CPI-M)"],
+[218,"Egra","Purba Medinipur","TMC","Tarun Maity","Subrata Paik",65,2,"","Anjan Kumar Pattnayak","Subrata Panda (CPI-M)"],
+[219,"Dantan","Paschim Medinipur","TMC","Manik Maity","Ajit Kumar Jana",65,2,"","Utpal Dutta","Shyamal Kanti Das Pattanayek (CPI)"],
+[220,"Nayagram","Jhargram","TMC","Dulal Murmu","Pradip Kumar Bijoli",65,2,"ST","Prasanta Murmu","Dr. Pulin Behari Baske (CPI-M)"],
+[221,"Gopiballavpur","Jhargram","TMC","Ajit Mahata","Lakshmikant Sahu",65,2,"","Sourav Ghosh","Bikash Sarangi (CPI)"],
+[222,"Jhargram","Jhargram","BJP","Mangal Soren","Bhadra Hembrem",61,2,"","Prasenjit Dey","Arjun Mahato (CPI-M)"],
+[223,"Keshiary","Paschim Medinipur","TMC","Ramjiban Mandi","Amiya Kisku",65,2,"ST","Kaluchand Tudu","Malina Murmu (CPI-M)"],
+[224,"Kharagpur Sadar","Paschim Medinipur","BJP","Pradip Sarkar","Dilip Ghosh",62,2,"","Papiya Chakraborty","Madhusudan Roy (CPI-M)"],
+[225,"Narayangarh","Paschim Medinipur","TMC","Pratibha Rani Maity","Rajesh Mahto",65,2,"","Sk Alam Hossain","Tapas Sinha (CPI-M)"],
+[226,"Sabang","Paschim Medinipur","TMC","Manas Ranjan Bhunia","Rama Prasad Giri",65,2,"","Aloke Kumar Samui","Nakul Chandra Bera (CPI-M)"],
+[227,"Pingla","Paschim Medinipur","TMC","Ajit Maity","Swagata Manna",65,2,"","Sushanta Mandal","Ashoke Sen (CPI)"],
+[228,"Kharagpur","Paschim Medinipur","BJP","Dinen Roy","Amal Panda",62,2,"","Ujjal Mukherjee","Sk. Sahajahan Ali (CPI-M)"],
+[229,"Debra","Paschim Medinipur","TMC","Rajib Banerjee","Tapan Bhuya",65,2,"","Chittaranjan Jana","Sumit Adhikary (CPI-M)"],
+[230,"Daspur","Paschim Medinipur","TMC","Asis Hudait","Shubhashish Om",65,2,"","Kousik Goswami","Ranjit Pal (CPI-M)"],
+[231,"Ghatal","Paschim Medinipur","TMC","Shyamali Sardar","Tapan Dutta",65,2,"SC","Kaberi Dolui","Shantinath Satik (CPI-M)"],
+[232,"Chandrakona","Paschim Medinipur","TMC","Surjya Kanta Doloi","Sital Kapat",65,2,"SC","Manika Middya","Suparna Dolui (CPI-M)"],
+[233,"Garbeta","Paschim Medinipur","BJP","Uttara Singha (Hazra)","Pradeep Lodha",60,2,"","Siddhartha Bishoyee","Tapan Ghosh (CPI-M)"],
+[234,"Salboni","Paschim Medinipur","TMC","Srikanta Mahata","Sukanta Dolui",65,2,"","Arup Mukherjee","—"],
+[235,"Keshpur","Paschim Medinipur","TMC","Seuli Saha","Biman Mahto",65,2,"SC","Kamal Kishore Khanna","Gurupada Mondal (CPI-M)"],
+[236,"Medinipur","Paschim Medinipur","TMC","Sujoy Hazra","Sankar Guchhait",65,2,"","Sambhunath Chattopadhyay","Monikuntal Khamrui (CPI)"],
+[237,"Binpur","Jhargram","TMC","Birbaha Hansda","Suvendu Samanta",65,2,"ST","Golapi Soren","Rabi Sing Sardar (CPI-M)"],
+[238,"Bandwan","Purulia","TMC","Rajib Lochan Saren","Pranat Tudu",65,2,"ST","Siten Mandi","Rathu Singh Sardar (CPI-M)"],
+[239,"Balarampur","Purulia","TMC","Shantiram Mahato","Labsen Baske",65,2,"","Sukanta Mahato","Namita Mahato (CPI-M)"],
+[240,"Baghmundi","Purulia","TMC","Sushanta Mahato","Rahidas Mahato",65,2,"","Nepal Chandra Mahato","Parimal Kumar (AIFB)"],
+[241,"Joypur","Purulia","BJP","Arjun Mahato","Biswajit Mahato",60,2,"","Phani Bhushan Kumar","Dhirendra Nath Mahato (AIFB)"],
+[242,"Purulia","Purulia","BJP","Sujoy Banerjee","Sudip Kumar Mukherjee",62,2,"","Dibyajyoti Prasad Singh Deo","Sayantan Ghosh (CPI-M)"],
+[243,"Manbazar","Purulia","TMC","Sandhya Rani Tudu","Jaladhar Mahto",65,2,"ST","Sombari Mahali","Sonamoni Tudu (CPI-M)"],
+[244,"Kashipur","Purulia","BJP","Soumen Beltharia","Moyna Murmu",59,2,"","Subhas Mahato","Sulekha Bauri (CPI-M)"],
+[245,"Para","Purulia","BJP","Manik Bauri","Kamalkanta Hansda",57,2,"SC","Phalguni Bauri","Aloke Bauri (CPI-M)"],
+[246,"Raghunathpur","Purulia","BJP","Hazari Bauri","Nadiar Chand Bauri",59,2,"SC","Sandhya Bauri","Ganesh Bauri (CPI-M)"],
+[247,"Saltora","Bankura","BJP","Uttam Bauri","Chandana Bauri",60,2,"SC","Amar Kanti Mandal","Nandalal Bauri (CPI-M)"],
+[248,"Chhatna","Bankura","TMC","Swapan Kumar Mandal","Satyanarayan Mukhopadhyay",65,2,"","Partha Pratim Bose","Rajib Kar (RSP)"],
+[249,"Ranibandh","Bankura","TMC","Dr. Tanushree Hansda","Kshudiram Tudu",65,2,"ST","Gurupada Sardar","Debalina Hembram (CPI-M)"],
+[250,"Raipur","Bankura","TMC","Thakur Moni Soren","Kshetra Mohan Hansda",65,2,"ST","Subhra Hembram Murmu","Ram Mandi (CPI-M)"],
+[251,"Taldangra","Bankura","TMC","Falguni Singhababu","Souvik Patra",65,2,"","Nayan Das Chakraborty","Debkanti Mohanti (CPI-M)"],
+[252,"Bankura","Bankura","BJP","Dr. Anup Mondal","Niladri Shekhar Dana",60,2,"","Arup Banerjee","Abhayananda Mukherjee (CPI-M)"],
+[253,"Barjora","Bankura","TMC","Goutam Mishra (Shyam)","Billeshwar Singha",65,2,"","Vivekananda Keora","Sujit Chakraborty (CPI-M)"],
+[254,"Onda","Bankura","BJP","Subrata Dutta (Gope)","Amarnath Shakha",58,2,"","Paban Salampuria","Asit Sharma (AIFB)"],
+[255,"Bishnupur","Bankura","BJP","Tanmoy Ghosh","Shukla Chatterjee",62,2,"","Ujjal Chandra","—"],
+[256,"Katulpur","Bankura","TMC","Harakali Pratihar","Laxmikanta Majumdar",65,2,"SC","Sumitra Mallick Santra","Ramchandra Roy (CPI-M)"],
+[257,"Indus","Bankura","TMC","Shyamali Roy Bagdi","Nirmal Kumar Dhara",65,2,"SC","Mou Mandal Samanta","Jharna Mallick (CPI-M)"],
+[258,"Sonamukhi","Bankura","TMC","Dr Kallol Saha","Dibakar Gharami",65,2,"SC","Rahul Bauri","Ajit Roy (CPI-M)"],
+[259,"Khandaghosh","Purba Bardhaman","TMC","Nabin Chandra Bag","Santanu Pramanik",65,2,"SC","Arup Kumar Saha","Ramjiban Roy (CPI-M)"],
+[260,"Bardhaman Dakshin","Purba Bardhaman","TMC","Khokon Das","Swagata Manna",65,2,"","Gourab Samaddar","Sudipta Gupta (CPI-M)"],
+[261,"Raina","Purba Bardhaman","TMC","Mandira Dalui","Subhash Patra",65,2,"SC","Anik Saha","Somnath Majhi (CPI-M)"],
+[262,"Jamalpur","Purba Bardhaman","TMC","Bhootnath Mallick","Arun Halder",65,2,"SC","Rajib Saha","Samar Hazra (MFB)"],
+[263,"Monteswar","Purba Bardhaman","TMC","Siddiqullah Chowdhury","Saikat Panja",65,2,"","Jyotirmoy Mondal","Anupam Ghosh (CPI-M)"],
+[264,"Kalna","Purba Bardhaman","TMC","Deboprasad Bag","Siddharth Majumdar",65,2,"SC","Amal Kumar Saha","Sarmistha Nag Saha (CPI-M)"],
+[265,"Memari","Purba Bardhaman","TMC","Rasbihari Halder","Manav Guha",65,2,"","Prabir Ganguly","Krishanu Bhadra (CPI-M)"],
+[266,"Bardhaman Uttar","Purba Bardhaman","TMC","Nisith Kumar Malik","Sanjay Das",65,2,"SC","Sandip Das","Mamoni Mondal Roy (CPI-M)"],
+[267,"Bhatar","Purba Bardhaman","TMC","Shantanu Koner","Soumen Karfa",65,2,"","Dhurjati Bijoy Maji","Hasina Khatoon (CPI-M)"],
+[268,"Purbasthali Dakshin","Purba Bardhaman","TMC","Swapan Debnath","Prankrishna Tapadar",65,2,"","Rabindranath Mondal","—"],
+[269,"Purbasthali Uttar","Purba Bardhaman","TMC","Vasundhara Goswami","Gopal Chattopadhayay",65,2,"","Amitava Bhattacharya","Pradip Saha (CPI-M)"],
+[270,"Katwa","Purba Bardhaman","TMC","Rabindranath Chatterjee","Krishna Ghosh",65,2,"","Ranajit Chatterjee","Sanjib Das (CPI-M)"],
+[271,"Ketugram","Purba Bardhaman","TMC","Sekh Sahonawez","Anadi Ghosh",65,2,"","Md. Mofirul Kassem","—"],
+[272,"Mangalkot","Purba Bardhaman","TMC","Apurba Chowdhury (Achal)","Shishir Ghosh",65,2,"","Jagadish Dutta","Miraj Alam (CPI-M)"],
+[273,"Ausgram","Purba Bardhaman","SWING","Shyamaprasanna Lohar","Kalita Maji",47,2,"SC","Nisha Boral","Chanchal Majhi (CPI-M)"],
+[274,"Galsi","Purba Bardhaman","TMC","Alok Kumar Majhi","Raju Patra",65,2,"SC","Debasish Biswas","Monimala Das (CPI-M)"],
+[275,"Pandabeswar","Paschim Bardhaman","BJP","Narendranath Chakraborty","Jitendra Kumar Tewari",63,2,"","Uttam Kumar Roy","Prabir Mondal (CPI-M)"],
+[276,"Durgapur Purba","Paschim Bardhaman","TMC","Pradip Mazumdar","Chandra Shekhar Banerjee",65,2,"","Debesh Chakraborty","Simanta Chatterjee (CPI-M)"],
+[277,"Durgapur Paschim","Paschim Bardhaman","SWING","Kavi Dutta","Lakshman Chandra Ghorui",46,2,"","Tarun Roy","Pravas Sain (CPI-M)"],
+[278,"Raniganj","Paschim Bardhaman","BJP","Kalobaran Mondal","Adv. Partho Ghosh",61,2,"","Faiz Ahmed","Naran Bauri (CPI-M)"],
+[279,"Jamuria","Paschim Bardhaman","TMC","Hareram Singh","Dr. Bijan Mukherjee",65,2,"","Tarun Kumar Ganguly","Md. Sabbir Hussain (CPI-M)"],
+[280,"Asansol Dakshin","Paschim Bardhaman","BJP","Tapas Banerjee","Agnimitra Paul",62,2,"","Souvik Mukherjee","Shilpi Chakraborty (CPI-M)"],
+[281,"Asansol Uttar","Paschim Bardhaman","TMC","Moloy Ghatak","Krishnendu Mukherjee",65,2,"","Prasenjit Puitandi","Akhilesh Kumar Singh (CPI)"],
+[282,"Kulti","Paschim Bardhaman","TMC","Abhijit Ghatak","Ajay Kumar Poddar",65,2,"","Rabi Yadav","Bhabani Acharya (AIFB)"],
+[283,"Barabani","Paschim Bardhaman","TMC","Bidhan Upadhyay","Arijit Roy",65,2,"","Joydev Roy","—"],
+[284,"Dubrajpur","Birbhum","TMC","Chandra Naresh Bauri","Anup Kumar Saha",65,2,"SC","Sanjoy Byapari","Bijoy Bagdi (AIFB)"],
+[285,"Suri","Birbhum","TMC","Ujjal Chatterjee","Jagannath Chattopadhyay",65,2,"","Sanjoy Adhikary","Motiur Rahaman (CPI-M)"],
+[286,"Bolpur","Birbhum","TMC","Chandranath Sinha","Dilip Kumar Ghosh",65,2,"","Rathin Sen","—"],
+[287,"Nanoor","Birbhum","TMC","Bidhan Chandra Majhi","Khokan Das",65,2,"SC","Abhay Das","Shymali Pradhan (CPI-M)"],
+[288,"Labpur","Birbhum","TMC","Abhijit Sinha (Rana)","Debasis Ojha",65,2,"","Ratna Sen","—"],
+[289,"Sainthia","Birbhum","TMC","Nilabati Saha","Krishna Kant Saha",65,2,"SC","Archana Ankur","Debu Chunari (CPI-M)"],
+[290,"Mayureswar","Birbhum","TMC","Abhijit Roy","Nikhil Banerjee",65,2,"","Syed Kasafoddoza","Jayanta Bhalla (CPI-M)"],
+[291,"Rampurhat","Birbhum","TMC","Asish Banerjee","Dhruba Saha",65,2,"","Vivekananda Shaw","Sanjib Mallick (CPI-M)"],
+[292,"Hansan","Birbhum","TMC","Fayezul Haque (Kajal Sk)","Dudh Kumar Mondal",65,2,"","Milton Rashid","Kamal Hasan (CPI-M)"],
+[293,"Nalhati","Birbhum","TMC","Rajendra Prasad Singh","Anil Singh",65,2,"","Dr. Abdul Karim","Dipak Chatterjee (AIFB)"],
+[294,"Murarai","Birbhum","TMC","Mosarraf Hossain","Rinki Ghosh",65,2,"","Sanjibur Rahaman","Md. Ali Reza Mandal (CPI-M)"]
 ];
 
 const PARTY_COLORS = {
@@ -1527,12 +1504,12 @@ const PARTY_COLORS = {
 };
 
 const WINNER_REASONS = {
-  TMC:'TMC advantage: 2021 stronghold, welfare schemes (Lakshmir Bhandar, Swasthya Sathi), minority consolidation, booth machinery. Based on 2021 result + 2024 LS segment data.',
-  BJP:'BJP advantage: 2024 LS momentum (led 164/294 segments), anti-incumbency (15yr TMC), Hindu/Matua consolidation, SIR deletions reducing Muslim roll, strong candidate profile.',
-  BGPM:'BGPM (TMC-ally): Dominant in Darjeeling hills. Gorkha identity politics, Thapa-Mamata coordination.',
-  INC:'INC: Adhir Ranjan Chowdhury legacy in Baharampur/Murshidabad.',
-  LF:'Left Front residual CPI(M) voter base.',
-  SWING:'Genuinely too close to call. Competing factors — SIR, 2024 LS swing, candidate strength, local dynamics — make this a toss-up.'
+  TMC:'TMC advantage: 2021 stronghold, welfare schemes (Lakshmir Bhandar, Swasthya Sathi), minority vote bank, booth machinery. Based on 2021 result + 2024 LS segment data + candidate strength.',
+  BJP:'BJP advantage: 2024 LS segment lead, anti-incumbency (15yr TMC), Hindu/Matua consolidation, CAA resonance, SIR roll deletions, coal belt anger. Strong candidate from official BJP list.',
+  BGPM:'BGPM (Bharatiya Gorkha Prajatantrik Morcha): TMC-allied hill party. Dominant in Darjeeling hills — Gorkha identity, GTA stability, Thapa-Mamata coordination.',
+  INC:'INC: Adhir Ranjan Chowdhury personal base in Baharampur. AICC official candidate contesting.',
+  LF:'Left Front/CPI-M: Residual voter base. Official LF candidate from LF Committee WB list.',
+  SWING:"Genuinely too close to call. Competing factors — SIR voter impact, 2024 LS swing, JUP Muslim vote split, anti-incumbency, strong BJP candidate — make this a real toss-up on May 4."
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
