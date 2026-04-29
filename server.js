@@ -71,7 +71,42 @@ function getStatus() {
   return { stage, phase1Turnout: 91.58, serverTime: now.toISOString() };
 }
 
-// ── API routes ────────────────────────────────────────────────────────────────
+// ── Live results tracker (May 4 counting) ────────────────────────────────────
+let resultsCache = { tmc_leading: 0, bjp_leading: 0, other_leading: 0, declared: 0, updated_at: null };
+
+async function fetchLiveCountingData() {
+  const status = getStatus();
+  if (status.stage !== 'results-live') return;
+  try {
+    // Try scraping ECI results page
+    const r = await fetch('https://results.eci.gov.in/ResultAcGenMar2026/partywiseresult-S07.htm', {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+      signal: AbortSignal.timeout(10000),
+    });
+    const html = await r.text();
+    // Parse basic tallies
+    const tmcMatch = html.match(/Trinamool.*?(\d+)/i);
+    const bjpMatch = html.match(/Bharatiya Janata.*?(\d+)/i);
+    if (tmcMatch || bjpMatch) {
+      resultsCache = {
+        tmc_leading: tmcMatch ? parseInt(tmcMatch[1]) : 0,
+        bjp_leading: bjpMatch ? parseInt(bjpMatch[1]) : 0,
+        other_leading: 0,
+        declared: 0,
+        updated_at: new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }),
+      };
+    }
+  } catch(e) {
+    console.log('[results] not yet available or fetch failed');
+  }
+}
+
+// Check for results every 3 minutes on May 4
+setInterval(() => {
+  if (getStatus().stage === 'results-live') fetchLiveCountingData();
+}, 3 * 60 * 1000);
+
+app.get('/api/results', (req, res) => res.json(resultsCache));
 app.get('/api/news', (req, res) => res.json(newsCache));
 app.get('/api/status', (req, res) => res.json(getStatus()));
 app.get('/api/intelligence', (req, res) => {
