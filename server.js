@@ -68,7 +68,7 @@ function getStatus() {
     [new Date('2026-04-23T01:30:00Z'), 'phase1-voting'],
   ];
   const stage = stages.find(([t]) => now >= t)?.[1] || 'pre-election';
-  return { stage, phase1Turnout: 91.58, serverTime: now.toISOString() };
+  return { stage, phase1Turnout: 92.35, phase2TurnoutSoFar: 18.39, serverTime: now.toISOString() };
 }
 
 // ── Live results tracker (May 4 counting) ────────────────────────────────────
